@@ -22,7 +22,25 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log(socket.id + ' disconnected.')
     })
+
+    socket.on("blue", (data) => {
+        console.log( "blue event received" );
+        io.emit("change", {r:0, g:0, b:255});
+    });
+
+    socket.on('get_player_info', (data) => {
+        console.log(data);
+    });
+
+    player_update();
+
+    console.log(socket);
 })
+
+function player_update() {
+    setTimeout(player_update, 1000);
+    io.emit('player_update');
+}
 
 app.use(express.static(ABS_STATIC_PATH));
 server.listen(LISTEN_PORT);

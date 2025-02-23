@@ -6,6 +6,19 @@
         <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <!-- Scripts -->
+         <script>
+            document.addEventListener('keydown', function (event) {
+                let plane = document.querySelector('#test-box')
+                let planePos = plane.getAttribute('position')
+                const key = event.key
+
+                if (key === 'd') {
+                    plane.setAttribute('position', {...planePos, x: planePos.x + 0.1})
+                } if (key === 'a') {
+                    plane.setAttribute('position', {...planePos, x: planePos.x - 0.1})
+                }
+            });
+         </script>
     </head>
     <body>
         <a-scene device-orientation-permission-ui physics="debug: true;">
@@ -13,6 +26,7 @@
             player
             camera
             wasd-controls
+            look-controls
             position="0 5 0"
             >
                 <!-- Raycaster -->
@@ -23,6 +37,7 @@
              <a-box
                 id="test-box"
                 look-controls
+                plane-rotation
                 static-body
                 position="0 2 -7"
                 width="3.5"
@@ -31,6 +46,7 @@
              ></a-box>
              <a-sphere
                 id="test-ball"
+                class="interactive"
                 dynamic-body
                 position="0 2.5 -7"
                 material="color: blue;"
@@ -63,8 +79,28 @@
         <script>
             const socket = io();
 
-            socket.on('connect', (userData) => {
-                console.log('Hello');
+            socket.on('connect', () => {
+                console.log('Hello ' + socket.id);
+
+                document.querySelector('#test-ball').addEventListener('click', function () {
+                    socket.emit('blue');
+                })
+            })
+
+            socket.on('change', (data) => {
+                console.log('clicked')
+                const el = document.querySelector('#test-ball')
+                const elPos = el.getAttribute('position')
+                el.body.applyImpulse(
+                    new CANNON.Vec3(0, 10, 0),
+                    new CANNON.Vec3().copy(new CANNON.Vec3(elPos.x, elPos.y, elPos.z))
+                )
+            })
+
+            socket.on('player_update', (data) => {
+                console.log('getting players data');
+                const playerPos = document.querySelector('#player').getAttribute('position');
+                socket.emit('get_player_info', playerPos);
             })
          </script>
     </body>
