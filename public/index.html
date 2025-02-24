@@ -6,22 +6,9 @@
         <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <!-- Scripts -->
-         <script>
-            document.addEventListener('keydown', function (event) {
-                let plane = document.querySelector('#test-box')
-                let planePos = plane.getAttribute('position')
-                const key = event.key
-
-                if (key === 'd') {
-                    plane.setAttribute('position', {...planePos, x: planePos.x + 0.1})
-                } if (key === 'a') {
-                    plane.setAttribute('position', {...planePos, x: planePos.x - 0.1})
-                }
-            });
-         </script>
     </head>
     <body>
-        <a-scene device-orientation-permission-ui physics="debug: true;">
+        <a-scene id="scene" device-orientation-permission-ui physics="debug: true;">
             <a-entity id="player"
             player
             camera
@@ -97,10 +84,42 @@
                 )
             })
 
-            socket.on('player_update', (data) => {
+            socket.on('get_player_info', () => {
                 console.log('getting players data');
                 const playerPos = document.querySelector('#player').getAttribute('position');
-                socket.emit('get_player_info', playerPos);
+                socket.emit('set_player_info', {id: socket.id, pos: playerPos});
+            })
+
+            socket.on('update_co', (data) => {
+                console.log(data);
+
+                let dataKeys = Object.keys(data);
+
+                if (dataKeys.length >= 1) {
+                    dataKeys.forEach((key) => {
+                        if (key === socket.id) {
+                            return
+                        }
+
+                        let playerId = `player-${key}`;
+                        let el = document.querySelector(`#${playerId}`);
+                        if (el === null) {
+                            let newPlayer = document.createElement('a-entity');
+                            newPlayer.setAttribute('geometry', {primitive: 'box'});
+                            newPlayer.setAttribute('material', {color: 'red'});
+                            newPlayer.setAttribute('position', data[key]);
+                            newPlayer.setAttribute('id', playerId);
+                            document.querySelector('#scene').appendChild(newPlayer);
+                            console.log('undefined, newly created char');
+                        } else {
+                            debugger
+                            el.setAttribute('geometry', {primitive: 'box'});
+                            el.setAttribute('material', {color: 'red'});
+                            el.setAttribute('position', data[key]);
+                        }
+                        console.log('end of loop');
+                    })
+                }
             })
          </script>
     </body>

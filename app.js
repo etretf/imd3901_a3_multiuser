@@ -16,6 +16,12 @@ app.get('/', function(req, res) {
     res.sendFile('index.html', {root:ABS_STATIC_PATH});
 });
 
+
+// Server-persistent data
+
+let playerPositions = {};
+
+
 io.on('connection', (socket) => {
     console.log(socket.id + ' connected.')
 
@@ -28,18 +34,19 @@ io.on('connection', (socket) => {
         io.emit("change", {r:0, g:0, b:255});
     });
 
-    socket.on('get_player_info', (data) => {
-        console.log(data);
+    socket.on('set_player_info', (data) => {
+        playerPositions[data.id] = data.pos;
+        console.log(playerPositions);
+        io.emit('update_co', playerPositions);
     });
 
+    // Looping events
     player_update();
-
-    console.log(socket);
 })
 
 function player_update() {
-    setTimeout(player_update, 1000);
-    io.emit('player_update');
+    setTimeout(player_update, 20);
+    io.emit('get_player_info');
 }
 
 app.use(express.static(ABS_STATIC_PATH));
