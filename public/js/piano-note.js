@@ -11,5 +11,7 @@ AFRAME.registerComponent('piano-note', {
             const synth = new Tone.Synth().toDestination();
             synth.triggerAttackRelease(CONTEXT_AF.data.note, "8n");
         })
+
+        socket.emit('send_note', {note: this.data.note, participantID: socket.id})
     }
 })

@@ -7,10 +7,13 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://unpkg.com/tone"></script>
         <!-- Scripts -->
+        <!-- <script src="js/constants.js"></script> -->
+
         <script src="js/play-note.js"></script>
         <script src="js/piano-note.js"></script>
         <script src="js/piano-spawn.js"></script>
         <script src="js/black-key.js"></script>
+        <script src="js/game-manager.js"></script>
 
         <!-- Stylesheet links -->
         <link rel="stylesheet" href="/css/user-gesture.css">
@@ -30,15 +33,18 @@
               </div>
             </div> -->
             <a-scene start-experience>
+                <a-assets>
+                    <img id="gameScreen" src="assets/images/gameScreen.png" alt="">
+                </a-assets>
                 <!-- Game manager -->
-                 <a-entity game-manager></a-entity>
+                 <a-entity id="game-manager" game-manager></a-entity>
                 <!-- Player -->
                 <a-entity id="player"
-                player
-                camera
-                wasd-controls
-                look-controls
-                position="0 1.6 0"
+                    player
+                    camera
+                    wasd-controls
+                    look-controls
+                    position="0 1.6 0"
                 >
                     <!-- Raycaster -->
                     <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
@@ -50,7 +56,7 @@
                 
                 <!-- Game screen -->
     
-                <a-plane id="game-screen" position="0 2.43287 -12" material="color: white; shader: flat;" geometry="height: 2.36; width: 3.37">
+                <a-plane id="game-screen" src="" text="value: test; color: black; align: center;" position="0 2.43287 -12" material="shader: flat;" geometry="height: 2.36; width: 3.37">
                     <a-cylinder id="button-pedestal" radius="1" position="0 -2 0">
                         <a-cylinder 
                             id="game-button"
@@ -60,6 +66,7 @@
                             position="0 0.2487 0"
                             animation__click="property:position.y; from:0.1; to:0.2487; startEvents:click; dur:300"
                         ></a-cylinder>
+                        <a-entity id="note-player"></a-entity>
                     </a-cylinder>
                 </a-plane>
                 <!-- Piano -->
@@ -96,6 +103,7 @@
                 <a-entity environment="preset: starry;"></a-entity>
             </a-scene>
         <script>
+            const socket = io();
         </script>
     </body>
 </html>

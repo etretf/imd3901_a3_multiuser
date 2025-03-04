@@ -4,7 +4,7 @@ const ALL_KEYS = [
     {type: 'white', note: 'D3'},
     {type: 'black', note: 'D#3'},
     {type: 'white', note: 'E3'},
-    {type: 'white', snote: 'F3'},
+    {type: 'white', note: 'F3'},
     {type: 'black', note: 'F#3'},
     {type: 'white', note: 'G3'},
     {type: 'black', note: 'G#3'},
@@ -32,13 +32,12 @@ const SORTED_KEYS = {white: WHITE_KEYS, black: BLACK_KEYS}
 
 AFRAME.registerComponent('piano-spawn', {
     schema: {
-        keys: {default: SORTED_KEYS},
     },
     init: function () {
         const CONTEXT_AF = this;
 
         const createKeys = function () {
-            const whiteKeys = CONTEXT_AF.data.keys.white
+            const whiteKeys = WHITE_KEYS
 
             for (let i = 0; i < whiteKeys.length; i++) {
                 const keyEl = document.createElement('a-box');

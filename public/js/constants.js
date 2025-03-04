@@ -1,4 +1,4 @@
-export const ALL_KEYS = [
+const ALL_KEYS = [
     {type: 'white', note: 'C3'},
     {type: 'black', note: 'C#3'},
     {type: 'white', note: 'D3'},
