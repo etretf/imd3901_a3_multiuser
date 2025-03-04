@@ -27,6 +27,8 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(socket.id + ' disconnected.')
+        delete playerPositions[socket.id];
+        io.emit('player_disconnect', socket.id);
     })
 
     socket.on("blue", (data) => {
@@ -36,9 +38,13 @@ io.on('connection', (socket) => {
 
     socket.on('set_player_info', (data) => {
         playerPositions[data.id] = data.pos;
-        console.log(playerPositions);
         io.emit('update_co', playerPositions);
     });
+
+    socket.on('play_note', (data) => {
+        console.log(data);
+        io.emit('send_note', {id: socket.id, ...data});
+    })
 
     // Looping events
     player_update();
