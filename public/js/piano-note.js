@@ -9,9 +9,9 @@ AFRAME.registerComponent('piano-note', {
 
         CONTEXT_AF.el.addEventListener('mousedown', function () {
             const synth = new Tone.Synth().toDestination();
-            synth.triggerAttackRelease(CONTEXT_AF.data.note, "8n");
-        })
+            synth.triggerAttackRelease(CONTEXT_AF.data.note, "4n");
 
-        socket.emit('send_note', {note: this.data.note, participantID: socket.id})
+            socket.emit('piano_note', {note: CONTEXT_AF.data.note, id: socket.id});
+        })
     }
 })

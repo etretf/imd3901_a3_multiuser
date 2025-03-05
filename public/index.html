@@ -8,33 +8,44 @@
         <script src="https://unpkg.com/tone"></script>
         <!-- Scripts -->
         <!-- <script src="js/constants.js"></script> -->
-
-        <script src="js/play-note.js"></script>
         <script src="js/piano-note.js"></script>
         <script src="js/piano-spawn.js"></script>
         <script src="js/black-key.js"></script>
         <script src="js/game-manager.js"></script>
+        <script src="js/play-note.js"></script>
+        <script src="js/teleport-pad.js"></script>
 
         <!-- Stylesheet links -->
         <link rel="stylesheet" href="/css/user-gesture.css">
+
+        <script>
+            const startAudio = async function () {
+                await Tone.start();
+                document.querySelector('#user-gesture-overlay').style.display = 'none';
+                console.log('whaaaa')
+            }
+        </script>
     </head>
     <body>
         <body>
             <!-- by having a 2D "user gesture" we can allow sounds to play and the like. We will make it an overlay so nothing can be clicked before the user gesture ... -->
             <!-- https://developers.google.com/web/updates/2017/09/autoplay-policy-changes (fun memes on webpage;) -->
-            <!-- <div id="user-gesture-overlay">
+            <div id="user-gesture-overlay">
               <div class="center">
-                <button class="user-gesture-button-blue" style="display: block;">
+                <!-- <button class="user-gesture-button-blue" style="display: block;">
                     <a href="collaborative.html">Collaborate on music</a>
-                </button>
-                <button class="user-gesture-button" style="display: block;">
-                    <a href="notegame.html">Play ear training game</a>
+                </button> -->
+                <button id="ear-training-button" onclick="startAudio()" class="user-gesture-button" style="display: block;">
+                    <!-- <a href="notegame.html">Play ear training game</a> -->
                 </button>
               </div>
-            </div> -->
+            </div>
             <a-scene start-experience>
                 <a-assets>
-                    <img id="gameScreen" src="assets/images/gameScreen.png" alt="">
+                    <img id="gameScreenImg" src="assets/images/gameScreen.png" alt="">
+                    <img id="buttonGreen" src="assets/images/buttonGreen.png" alt="">
+                    <img id="buttonMagenta" src="assets/images/buttonMagenta.png" alt="">
+                    <img id="buttonOrange" src="assets/images/buttonOrange.png" alt="">
                 </a-assets>
                 <!-- Game manager -->
                  <a-entity id="game-manager" game-manager></a-entity>
@@ -54,26 +65,29 @@
                  
                 <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity>
                 
+                <!-- Teleport pads -->
+
+                <a-cylinder teleport-pad></a-cylinder>
+                <a-cylinder teleport-pad position="0 0 -1"></a-cylinder>
+                <a-cylinder teleport-pad position="0 0 -2"></a-cylinder>
+
                 <!-- Game screen -->
-    
-                <a-plane id="game-screen" src="" text="value: test; color: black; align: center;" position="0 2.43287 -12" material="shader: flat;" geometry="height: 2.36; width: 3.37">
-                    <a-cylinder id="button-pedestal" radius="1" position="0 -2 0">
-                        <a-cylinder 
-                            id="game-button"
-                            class="interactive"
-                            radius="0.2"
-                            material="color: red;"
-                            position="0 0.2487 0"
-                            animation__click="property:position.y; from:0.1; to:0.2487; startEvents:click; dur:300"
-                        ></a-cylinder>
-                        <a-entity id="note-player"></a-entity>
-                    </a-cylinder>
-                </a-plane>
+
+                <a-image id="game-screen" src="#gameScreenImg" width="6" height="4" position="0 2 -8">
+                    <a-image id="start-button" class="interactive" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5" text="value: Start; wrapCount: 8; align:center;"></a-image>
+                    <a-image id="play-sound-button" visible="false" src="#buttonOrange" position="0 -1.2 1.5" width="1" height="0.5" text="value: PLAY SOUND; wrapCount: 12; align:center;"></a-image>
+                    <a-image id="restart-button" visible="false" src="#buttonMagenta" position="0 -1.2 1.5" width="1" height="0.5" text="value: RESTART; wrapCount: 12; align:center;"></a-image>
+                    <a-image id="player-count" visible="false" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5"></a-image>
+                </a-image>
+
+                <!-- Sound source for game -->
+                <a-entity id="sound-player" play-note></a-entity>
+                
                 <!-- Piano -->
                 <a-box
                     id="piano-spawn"
                     piano-spawn
-                    position="0 0.13 -8"
+                    position="0 0.13 -4.5"
                     material="color: black;"
                     position="0 0.25 0"
                     width="7.5"
@@ -104,6 +118,58 @@
             </a-scene>
         <script>
             const socket = io();
+
+            // Competitive game logic
+
+            socket.on('connect', () => {
+                console.log('Hello ' + socket.id);
+                document.querySelector('#game-manager').setAttribute('game-manager', 'currentPlayerId', socket.id);
+                console.log(document.querySelector('#game-manager'));
+            });
+
+            socket.on('update_game_state', (data) => {
+                const gameManagerEl = document.querySelector('#game-manager')
+                gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
+                gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
+            });
+
+            socket.on('get_player_data', (data) => {
+                const numReadyPlayers = data.players.filter(player => player.ready === true).length;
+                const totalNumPlayers = data.players.length;
+                console.log('num players - ' + totalNumPlayers);
+                const minTotalNumPlayers = totalNumPlayers === 1 ? 2 : totalNumPlayers;
+                const playerCountText = `${numReadyPlayers}/${minTotalNumPlayers}`
+                document.querySelector('#player-count').setAttribute('text', text=`value: ${playerCountText}; wrapCount: 12; align:center;`);
+            });
+
+            socket.on('play_note', (data) => {
+                console.log('Play a note');
+                console.log('Note: ' + data.note)
+                const soundPlayer = document.querySelector('#sound-player');
+                soundPlayer.setAttribute('play-note', {note: data.note});
+                soundPlayer.emit('play_note', data.note);
+            });
+
+            socket.on('round_result', (data) => {
+                console.log('Round winner is ' + data.id);
+                console.log(data);
+
+                const gameManagerEl = document.querySelector('#game-manager')
+                gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
+                gameManagerEl.setAttribute('game-manager', 'roundWinner', data.id);
+            });
+
+            socket.on('game_over', (data) => {
+                const gameManagerEl = document.querySelector('#game-manager')
+                gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
+                gameManagerEl.setAttribute('game-manager', 'roundResults', data.roundResults);
+                gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
+                console.log(data);
+                debugger
+            });
+            
+            // Competitive game logic end
+
         </script>
     </body>
 </html>

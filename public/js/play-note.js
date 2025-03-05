@@ -1,23 +1,23 @@
 AFRAME.registerComponent('play-note', {
-    schema: {},
+    schema: {
+        note: {type: 'string'}
+    },
     init: function () {
         const CONTEXT_AF = this;
 
-        CONTEXT_AF.el.addEventListener('mousedown', function () {
-            socket.emit('play_note', {note: 'C4'});
-            const synth = new Tone.Synth().toDestination();
-            // play a note from that synth
-            synth.triggerAttackRelease("C4", "8n");
-        })
+        CONTEXT_AF.gameManagerEl = document.querySelector('#game-manager');
 
-        socket.on('send_note', (data) => {
-            if (data.id !== socket.id) {
+        CONTEXT_AF.el.addEventListener('play_note', function (e) {
+            const playNote = function () {
                 const synth = new Tone.Synth().toDestination();
-                // play a note from that synth
-                synth.triggerAttackRelease("C4", "8n");
-            }
-            console.log(data);
-        })
+                synth.triggerAttackRelease(e.detail, "4n");
+
+                socket.emit('note_played');
+                console.log('emitting note_played');
+            };
+
+            setTimeout(playNote, 1000);
+        });
     },
     tick: function () {},
     update: function () {}

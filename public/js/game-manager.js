@@ -28,19 +28,23 @@ const KEYS = [
 
 const GAME_STATES = {
     INSTRUCTIONS: 'instructions',
+    WAITING: 'waiting',
     ACTIVE: 'active',
     FINISHED: 'finished'
 }
 
 const SCREEN_TEXT = {
-    INSTRUCTIONS: 'You will be playing an ear training game.\nA note will be played, then you will press a key on the piano and try to match the note.\nYou will compete with other players! Try to guess the note the fastest to win!\n\nPress to start',
-    ROUND_PREPLAY: 'A sound will be played. Try to match the note on the keyboard.',
-    ROUND_POSTPLAY: 'Match the sound!'
+    INSTRUCTIONS: 'You will be playing an ear training game.\n\nA note will be played, then you will try to match the note on the keyboard.\n\nYou will compete with other players! Try to guess the note first to win!\n\n',
+    WAITING: 'Waiting for another player to join...',
+    ROUND_PREPLAY: 'A sound will be played.',
+    ROUND_POSTPLAY: 'Match the sound!',
+    FINISHED: 'Game over.'
 }
 
 const ROUND_STATE = {
     PREPLAY: 'preplay',
-    POSTPLAY: 'postplay'
+    POSTPLAY: 'postplay',
+    RESULT: 'result'
 }
 
 AFRAME.registerComponent('game-manager', {
@@ -49,7 +53,9 @@ AFRAME.registerComponent('game-manager', {
         roundNum: {type: 'number', default: 0},
         numRounds: {type: 'number', default: 5},
         roundState: {type: 'string', default: ROUND_STATE.PREPLAY},
-        isPlaying: {type: 'boolean', default: false},
+        roundWinner:  {type: 'string'},
+        roundResults: {type: 'array'},
+        currentPlayerId: {type: 'string'},
         answerKey: {type: 'array'}
     },
     init: function () {
@@ -57,40 +63,74 @@ AFRAME.registerComponent('game-manager', {
         const CONTEXT_AF = this;
 
         // Select DOM elements
-        CONTEXT_AF.gameButton = document.querySelector('#game-button');
+        CONTEXT_AF.startButton = document.querySelector('#start-button');
+        CONTEXT_AF.playerCount = document.querySelector('#player-count');
+        CONTEXT_AF.playSoundButton = document.querySelector('#play-sound-button');
+        CONTEXT_AF.restartButton = document.querySelector('#restart-button');
         CONTEXT_AF.gameScreen = document.querySelector('#game-screen');
-        CONTEXT_AF.self       = document.querySelector('#game-manager');
-        CONTEXT_AF.setupGame();
 
-        CONTEXT_AF.gameButton.addEventListener('click', function () {
+        CONTEXT_AF.startButton.addEventListener('click', function () {
             console.log('start');
-            CONTEXT_AF.el.setAttribute('game-manager', 'data', {...CONTEXT_AF.el.getAttribute('game-manager'), gameState: GAME_STATES.ACTIVE});
-            debugger
-            CONTEXT_AF.playNote(CONTEXT_AF.data.answerKey[CONTEXT_AF.data.roundNum]);
 
+            // Make start button unclickable and hidden
+            CONTEXT_AF.startButton.setAttribute('visible', false);
+            CONTEXT_AF.startButton.classList.remove('interactive');
+
+            // Make player count UI visible
+            CONTEXT_AF.playerCount.setAttribute('visible', true);
+
+            CONTEXT_AF.el.setAttribute('game-manager', {...CONTEXT_AF.data, gameState: GAME_STATES.WAITING});
+            socket.emit('set_player_ready', {id: socket.id});
         })
     },
-    tick: function () {
-        let {data: {gameState, roundNum, roundState, answerKey, isPlaying}, gameScreen, playNote} = this;
-        if (gameState === GAME_STATES.INSTRUCTIONS) {
-            console.log('Instructions stage');
-            this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS})
-        }
-        
-        if (gameState === GAME_STATES.ACTIVE) {
-            console.log('Active stage');
-            if (roundState === ROUND_STATE.PREPLAY) {
-                gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_PREPLAY, wrapCount: 24})
-            }
-            if (roundState === ROUND_STATE.POSTPLAY) {
-                gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_POSTPLAY, wrapCount: 24})
-            }
-        }
-    },
+    tick: function () {},
     update: function (oldData) {
         console.log(oldData);
 
-        debugger
+        const {data: {gameState, roundState}} = this
+
+        if (gameState === GAME_STATES.INSTRUCTIONS) {
+            console.log('Instructions stage');
+            this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS, align: 'center', width: 5.5});
+        }
+
+        if (gameState === GAME_STATES.WAITING) {
+            console.log('Waiting for another player...');
+            this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.WAITING, align: 'center', wrapCount: 24});
+        }
+
+        if (gameState === GAME_STATES.ACTIVE) {
+            console.log('Active game state');
+            if (roundState === ROUND_STATE.PREPLAY) {
+                console.log('preplay');
+                this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_PREPLAY, align: 'center', wrapCount: 24});
+                this.playerCount.setAttribute('visible', false);
+            }
+            if (roundState === ROUND_STATE.POSTPLAY) {
+                console.log('postplay');
+                this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_POSTPLAY, align: 'center', wrapCount: 24})
+            }
+            if (roundState === ROUND_STATE.RESULT) {
+                console.log('round result');
+                const isWinner = this.data.roundWinner === this.data.currentPlayerId;
+                const screenText = isWinner ? 'You won the round!' : 'You were too slow...'
+                this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 24})
+            }
+        }
+
+        if (gameState === GAME_STATES.FINISHED) {
+            console.log('Finished game state');
+            const {data: {roundResults, currentPlayerId}} = this;
+            debugger
+            const numRoundsPlayed = roundResults.length
+            const numRoundsWon = roundResults.filter(res => res === currentPlayerId).length;
+            const isWinner = numRoundsWon >= Math.ceil(numRoundsPlayed / 2);
+            const screenText = isWinner ? `You won ${numRoundsWon}/${numRoundsPlayed} rounds!` : `You lost.\n\n You won ${numRoundsWon}/${numRoundsPlayed} rounds.`
+            this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 28});
+
+            this.restartButton.setAttribute('visible', true);
+            this.restartButton.classList.add('interactive');
+        }
 
     },
     generateRandomNotes: function () {
@@ -105,24 +145,5 @@ AFRAME.registerComponent('game-manager', {
             randKeyArr.push(KEYS[randNum].note);
         }
         return randKeyArr;
-    },
-    setupGame: function () {
-        this.data.answerKey = this.generateRandomNotes();
-        debugger
-
-    },
-    playNote: function (note) {
-        console.log('play note');
-        const synth = new Tone.Synth().toDestination();
-        synth.triggerAttackRelease(note, "4n");
-        this.data.isPlaying = false;
-        console.log('done playing note');
-    },
-    setupServerState: function () {
-        // Set up
-        socket.emit('setupGameState', {
-            answerKey: this.data.answerKey,
-            participantId: socket.id
-        });
     }
 })
