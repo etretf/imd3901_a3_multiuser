@@ -68,11 +68,10 @@ let playerPositions = {};
 // Competitive game data
 let answerKey = [];
 let roundResults = [];
-let queuing = false;
 let gameState = '';
 let roundState = '';
 let roundNum = 0;
-let numRounds = 2;
+const numRounds = 5;
 let players = [];
 
 // player schema
@@ -139,7 +138,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('piano_note', (data) => {
-        if (gameState === GAME_STATES.FINISHED) {
+        if (gameState !== GAME_STATES.ACTIVE) {
             return
         }
         if (data.note === answerKey[roundNum] && roundResults[roundNum] === undefined) {
@@ -169,9 +168,16 @@ io.on('connection', (socket) => {
                     io.emit('play_note', {note: answerKey[roundNum]});
                 }, 3000);
             }
-        } else {
-            console.log('wrong note: ' + data.note, answerKey[roundNum], roundResults[roundNum]);
-        }
+        } 
+    })
+
+    socket.on('restart_game', () => {
+        answerKey = [];
+        roundResults = [];
+        gameState = GAME_STATES.INSTRUCTIONS;
+        roundState = ROUND_STATE.PREPLAY;
+        roundNum = 0;
+        io.emit('update_game_state', {state: gameState, roundState});
     })
 
     // Updating player positions on server-side

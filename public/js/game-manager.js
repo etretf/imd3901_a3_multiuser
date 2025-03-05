@@ -81,6 +81,10 @@ AFRAME.registerComponent('game-manager', {
 
             CONTEXT_AF.el.setAttribute('game-manager', {...CONTEXT_AF.data, gameState: GAME_STATES.WAITING});
             socket.emit('set_player_ready', {id: socket.id});
+        });
+
+        CONTEXT_AF.restartButton.addEventListener('click', function () {
+            socket.emit('restart_game');
         })
     },
     tick: function () {},
@@ -91,7 +95,15 @@ AFRAME.registerComponent('game-manager', {
 
         if (gameState === GAME_STATES.INSTRUCTIONS) {
             console.log('Instructions stage');
-            this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS, align: 'center', width: 5.5});
+            this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS, align: 'center', width: 5.5, wrapCount: 40});
+            
+            // Show start button and make clickable
+            this.startButton.setAttribute('visible', true);
+            this.startButton.classList.add('interactive');
+
+            // Hide restart button and make unclickable
+            this.restartButton.setAttribute('visible', false);
+            this.restartButton.classList.remove('interactive');
         }
 
         if (gameState === GAME_STATES.WAITING) {
@@ -101,6 +113,11 @@ AFRAME.registerComponent('game-manager', {
 
         if (gameState === GAME_STATES.ACTIVE) {
             console.log('Active game state');
+
+            // Hide restart button and make unclickable
+            this.startButton.setAttribute('visible', false);
+            this.startButton.classList.remove('interactive');
+
             if (roundState === ROUND_STATE.PREPLAY) {
                 console.log('preplay');
                 this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_PREPLAY, align: 'center', wrapCount: 24});
@@ -128,8 +145,10 @@ AFRAME.registerComponent('game-manager', {
             const screenText = isWinner ? `You won ${numRoundsWon}/${numRoundsPlayed} rounds!` : `You lost.\n\n You won ${numRoundsWon}/${numRoundsPlayed} rounds.`
             this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 28});
 
+            // Show restart button and allow clicking
             this.restartButton.setAttribute('visible', true);
             this.restartButton.classList.add('interactive');
+
         }
 
     },

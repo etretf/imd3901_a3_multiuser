@@ -19,11 +19,29 @@
         <link rel="stylesheet" href="/css/user-gesture.css">
 
         <script>
-            const startAudio = async function () {
+            AFRAME.registerComponent('start-experience', {
+                init: function () {
+                    //we can't play sound on some browsers until we have some user interaction
+                    //this means we should only start playing ambient music after this button is clicked
+                    console.log('scene loaded');
+                    document.querySelector('#user-gesture-button').style.display='block';
+                }
+            });
+
+            const startCompetitive = async function () {
+                await Tone.start();
+                document.querySelector('#user-gesture-overlay').style.display= 'none';
+                document.querySelector('#competitive-scene').style.display = 'block';
+                console.log('whaaaa')
+            };
+
+            
+            const startCollaborative = async function () {
                 await Tone.start();
                 document.querySelector('#user-gesture-overlay').style.display = 'none';
-                console.log('whaaaa')
-            }
+                document.querySelector('#collaborative-scene').style.display = 'block';
+                console.log('awwwww')
+            };
         </script>
     </head>
     <body>
@@ -35,8 +53,11 @@
                 <!-- <button class="user-gesture-button-blue" style="display: block;">
                     <a href="collaborative.html">Collaborate on music</a>
                 </button> -->
-                <button id="ear-training-button" onclick="startAudio()" class="user-gesture-button" style="display: block;">
-                    <!-- <a href="notegame.html">Play ear training game</a> -->
+                <button id="user-gesture-button" onclick="startCompetitive()" class="user-gesture-button" style="display: block;">
+                    Play competitive note guessing game!
+                </button>
+                <button id="user-gesture-button" onclick="startCollaborative()" class="user-gesture-button" style="display: block;">
+                    <a href="collaborative.html">Make some music together!</a>
                 </button>
               </div>
             </div>
@@ -48,7 +69,7 @@
                     <img id="buttonOrange" src="assets/images/buttonOrange.png" alt="">
                 </a-assets>
                 <!-- Game manager -->
-                 <a-entity id="game-manager" game-manager></a-entity>
+                    <a-entity id="game-manager" game-manager></a-entity>
                 <!-- Player -->
                 <a-entity id="player"
                     player
@@ -62,7 +83,7 @@
                 </a-entity>
     
                 <!-- Lights -->
-                 
+                    
                 <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity>
                 
                 <!-- Teleport pads -->

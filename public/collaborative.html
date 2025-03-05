@@ -7,13 +7,42 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://unpkg.com/tone"></script>
         <!-- Scripts -->
-        <script src="js/play-note.js"></script>
+        <!-- <script src="js/constants.js"></script> -->
         <script src="js/piano-note.js"></script>
         <script src="js/piano-spawn.js"></script>
         <script src="js/black-key.js"></script>
+        <script src="js/game-manager.js"></script>
+        <script src="js/play-note.js"></script>
+        <script src="js/teleport-pad.js"></script>
 
         <!-- Stylesheet links -->
         <link rel="stylesheet" href="/css/user-gesture.css">
+
+        <script>
+            AFRAME.registerComponent('start-experience', {
+                init: function () {
+                    //we can't play sound on some browsers until we have some user interaction
+                    //this means we should only start playing ambient music after this button is clicked
+                    console.log('scene loaded');
+                    document.querySelector('#user-gesture-button').style.display='block';
+                }
+            });
+
+            const startCompetitive = async function () {
+                await Tone.start();
+                document.querySelector('#user-gesture-overlay').style.display= 'none';
+                document.querySelector('#competitive-scene').style.display = 'block';
+                console.log('whaaaa')
+            };
+
+            
+            const startCollaborative = async function () {
+                await Tone.start();
+                document.querySelector('#user-gesture-overlay').style.display = 'none';
+                document.querySelector('#collaborative-scene').style.display = 'block';
+                console.log('awwwww')
+            };
+        </script>
     </head>
     <body>
         <body>
@@ -21,15 +50,67 @@
             <!-- https://developers.google.com/web/updates/2017/09/autoplay-policy-changes (fun memes on webpage;) -->
             <div id="user-gesture-overlay">
               <div class="center">
-                <button class="user-gesture-button" style="display: block;">
+                <!-- <button class="user-gesture-button-blue" style="display: block;">
                     <a href="collaborative.html">Collaborate on music</a>
+                </button> -->
+                <button id="user-gesture-button" onclick="startCompetitive()" class="user-gesture-button" style="display: block;">
+                    Play competitive note guessing game!
                 </button>
-                <button class="user-gesture-button" style="display: block;">
-                    <a href="notegame.html">Play ear training game</a>
+                <button id="user-gesture-button" onclick="startCollaborative()" class="user-gesture-button" style="display: block;">
+                    Make some music together!
                 </button>
               </div>
             </div>
+            <a-scene start-experience>
+                <a-assets>
+                    <img id="gameScreenImg" src="assets/images/gameScreen.png" alt="">
+                    <img id="buttonGreen" src="assets/images/buttonGreen.png" alt="">
+                    <img id="buttonMagenta" src="assets/images/buttonMagenta.png" alt="">
+                    <img id="buttonOrange" src="assets/images/buttonOrange.png" alt="">
+                </a-assets>
+                <!-- Game manager -->
+                    <a-entity id="game-manager" game-manager></a-entity>
+                <!-- Player -->
+                <a-entity id="player"
+                    player
+                    camera
+                    wasd-controls
+                    look-controls
+                    position="0 1.6 0"
+                >
+                    <!-- Raycaster -->
+                    <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+                </a-entity>
+    
+                <!-- Lights -->
+                    
+                <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity>
+                
+                <!-- Teleport pads -->
+
+                <a-cylinder teleport-pad></a-cylinder>
+                <a-cylinder teleport-pad position="0 0 -1"></a-cylinder>
+                <a-cylinder teleport-pad position="0 0 -2"></a-cylinder>
+
+                <!-- Game screen -->
+
+                <a-image id="game-screen" src="#gameScreenImg" width="6" height="4" position="0 2 -8">
+                    <a-image id="start-button" class="interactive" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5" text="value: Start; wrapCount: 8; align:center;"></a-image>
+                    <a-image id="play-sound-button" visible="false" src="#buttonOrange" position="0 -1.2 1.5" width="1" height="0.5" text="value: PLAY SOUND; wrapCount: 12; align:center;"></a-image>
+                    <a-image id="restart-button" visible="false" src="#buttonMagenta" position="0 -1.2 1.5" width="1" height="0.5" text="value: RESTART; wrapCount: 12; align:center;"></a-image>
+                    <a-image id="player-count" visible="false" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5"></a-image>
+                </a-image>
+
+                <!-- Sound source for game -->
+                <a-entity id="sound-player" play-note></a-entity>
+                
+
+                <a-entity environment="preset: starry;"></a-entity>
+            </a-scene>
         <script>
+            const socket = io();
+
+
         </script>
     </body>
 </html>
