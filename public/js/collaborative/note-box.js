@@ -59,7 +59,17 @@ AFRAME.registerComponent('note-box', {
         CONTEXT_AF.el.setAttribute('text', {value: `${CONTEXT_AF.data.note}`});
 
 
-        CONTEXT_AF.el.addEventListener('click', function () {
+        CONTEXT_AF.el.addEventListener('click', function (e) {
+
+            if (e.detail.mouseEvent.shiftKey) {
+                console.log('shift click');
+
+                // CONTEXT_AF.data.noteIdx = 0;
+
+                // CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
+                // CONTEXT_AF.el.setAttribute('material', 'color', NOTE_COLOURS[noteIdx]);
+                return
+            }
             console.log('click note');
 
 
@@ -69,10 +79,12 @@ AFRAME.registerComponent('note-box', {
             console.log(noteIdx);
 
             CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
-
-            CONTEXT_AF.el.setAttribute('material', 'color', NOTE_COLOURS[noteIdx]);
             CONTEXT_AF.sequencerEl.emit('note-change', {note: CONTEXT_AF.data.note, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx});
         });
+
+        CONTEXT_AF.el.addEventListener('contextmenu', function () {
+            console.log('right mouse click');
+        })
     },
     update: function () {
     },
