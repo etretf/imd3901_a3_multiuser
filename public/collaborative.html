@@ -7,13 +7,9 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://unpkg.com/tone"></script>
         <!-- Scripts -->
-        <!-- <script src="js/constants.js"></script> -->
-        <script src="js/piano-note.js"></script>
-        <script src="js/piano-spawn.js"></script>
-        <script src="js/black-key.js"></script>
-        <script src="js/game-manager.js"></script>
-        <script src="js/play-note.js"></script>
         <script src="js/teleport-pad.js"></script>
+        <script src="js/collaborative/step-sequencer.js"></script>
+        <script src="js/collaborative/note-box.js"></script>
 
         <!-- Stylesheet links -->
         <link rel="stylesheet" href="/css/user-gesture.css">
@@ -27,20 +23,11 @@
                     document.querySelector('#user-gesture-button').style.display='block';
                 }
             });
-
-            const startCompetitive = async function () {
-                await Tone.start();
-                document.querySelector('#user-gesture-overlay').style.display= 'none';
-                document.querySelector('#competitive-scene').style.display = 'block';
-                console.log('whaaaa')
-            };
-
             
-            const startCollaborative = async function () {
+            const startExperience = async function () {
                 await Tone.start();
                 document.querySelector('#user-gesture-overlay').style.display = 'none';
-                document.querySelector('#collaborative-scene').style.display = 'block';
-                console.log('awwwww')
+                console.log('start experience')
             };
         </script>
     </head>
@@ -53,10 +40,7 @@
                 <!-- <button class="user-gesture-button-blue" style="display: block;">
                     <a href="collaborative.html">Collaborate on music</a>
                 </button> -->
-                <button id="user-gesture-button" onclick="startCompetitive()" class="user-gesture-button" style="display: block;">
-                    Play competitive note guessing game!
-                </button>
-                <button id="user-gesture-button" onclick="startCollaborative()" class="user-gesture-button" style="display: block;">
+                <button id="user-gesture-button" onclick="startExperience()" class="user-gesture-button" style="display: block;">
                     Make some music together!
                 </button>
               </div>
@@ -68,8 +52,6 @@
                     <img id="buttonMagenta" src="assets/images/buttonMagenta.png" alt="">
                     <img id="buttonOrange" src="assets/images/buttonOrange.png" alt="">
                 </a-assets>
-                <!-- Game manager -->
-                    <a-entity id="game-manager" game-manager></a-entity>
                 <!-- Player -->
                 <a-entity id="player"
                     player
@@ -81,36 +63,57 @@
                     <!-- Raycaster -->
                     <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
                 </a-entity>
-    
+
                 <!-- Lights -->
-                    
+    
                 <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity>
+
+
+                <!-- Stage -->
                 
-                <!-- Teleport pads -->
+                <!-- Buttons -->
+                <a-box id="button-pedestal" material="" geometry="height: 0.5; width: 1.89" position="0 0.12697 0">
+                    <a-box id="start-loop-button" class="interactive" material="color: green;" geometry="depth: 0.25; height: 0.32; width: 0.6" position="-0.43331 0.56135 0"></a-box>
+                    <a-box id="stop-loop-button" class="interactive" material="color: red;" geometry="depth: 0.25; height: 0.32; width: 0.6" position=".2 0.56135 0"></a-box>
+                </a-box>
 
-                <a-cylinder teleport-pad></a-cylinder>
-                <a-cylinder teleport-pad position="0 0 -1"></a-cylinder>
-                <a-cylinder teleport-pad position="0 0 -2"></a-cylinder>
+                <!-- Step sequencer -->
+                <a-entity id="step-sequencer" step-sequencer position="2.5 0 -4">
+                    <!-- <a-entity id="col-1" position="-5 0 0">
+                        <a-box class="interactive" note-box position="0 2.4 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.8 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.2 0"></a-box>
+                        <a-box class="interactive" note-box position="0 0.6 0"></a-box>
+                    </a-entity>
+                    <a-entity id="col-2" position="-4.2 0 0">
+                        <a-box class="interactive" note-box position="0 2.4 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.8 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.2 0"></a-box>
+                        <a-box class="interactive" note-box position="0 0.6 0"></a-box>
+                    </a-entity>
+                    <a-entity id="col-3" position="-3.4 0 0">
+                        <a-box class="interactive" note-box position="0 2.4 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.8 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.2 0"></a-box>
+                        <a-box class="interactive" note-box position="0 0.6 0"></a-box>
+                    </a-entity>
+                    <a-entity id="col-4" position="-2.6 0 0">
+                        <a-box class="interactive" note-box position="0 2.4 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.8 0"></a-box>
+                        <a-box class="interactive" note-box position="0 1.2 0"></a-box>
+                        <a-box class="interactive" note-box position="0 0.6 0"></a-box>
+                    </a-entity> -->
+                </a-entity>
 
-                <!-- Game screen -->
-
-                <a-image id="game-screen" src="#gameScreenImg" width="6" height="4" position="0 2 -8">
-                    <a-image id="start-button" class="interactive" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5" text="value: Start; wrapCount: 8; align:center;"></a-image>
-                    <a-image id="play-sound-button" visible="false" src="#buttonOrange" position="0 -1.2 1.5" width="1" height="0.5" text="value: PLAY SOUND; wrapCount: 12; align:center;"></a-image>
-                    <a-image id="restart-button" visible="false" src="#buttonMagenta" position="0 -1.2 1.5" width="1" height="0.5" text="value: RESTART; wrapCount: 12; align:center;"></a-image>
-                    <a-image id="player-count" visible="false" src="#buttonGreen" position="0 -1.2 1.5" width="1.25" height="0.5"></a-image>
-                </a-image>
-
-                <!-- Sound source for game -->
-                <a-entity id="sound-player" play-note></a-entity>
-                
+                <!-- Demo music blocks -->
 
                 <a-entity environment="preset: starry;"></a-entity>
             </a-scene>
         <script>
             const socket = io();
 
-
+            // const sequencer = new Tone.Sequence(() => console.log('time tick'), ["C4", "E4", "G4", "A4"], "4n");
+            // sequencer.start(0);
         </script>
     </body>
 </html>
