@@ -68,7 +68,7 @@ AFRAME.registerComponent('note-box', {
 
                 // CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
                 // CONTEXT_AF.el.setAttribute('material', 'color', NOTE_COLOURS[noteIdx]);
-                return
+                // return
             }
             console.log('click note');
 
