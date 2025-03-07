@@ -67,8 +67,9 @@ AFRAME.registerComponent('step-sequencer', {
         // Add event listener for note box change
 
         CONTEXT_AF.el.addEventListener('note-change', function (e) {
-            console.log('note changed detected by sequencer');
-            const {detail: {note, colIdx, rowIdx}} = e;
+            const {detail: {note}} = e;
+            const octaveNote = () => CONTEXT_AF.getNoteWithOctave(note, CONTEXT_AF.data.octave);
+            // CONTEXT_AF.data.synth.triggerAttackRelease(octaveNote, '8n');
         })
     },
     update: function (oldData) {
@@ -80,7 +81,7 @@ AFRAME.registerComponent('step-sequencer', {
         this.sequencer = new Tone.Sequence(this.columnTick.bind(this), this.indexArray(this.data.columns), this.data.subdivision).start(0);
     },
     columnTick: function (time, index) {
-        console.log('Time: ' + time + '\t\t\t' + 'Index: ' + index);
+        // console.log('Time: ' + time + '\t\t\t' + 'Index: ' + index);
 
         const notesToPlay = [];
 
@@ -89,8 +90,10 @@ AFRAME.registerComponent('step-sequencer', {
             if (octaveNote) {
                 notesToPlay.push(octaveNote);
             }
+
+            el.emit('note-animate');
+            el.emit('note-animate-end');
         })
-        debugger
         this.synth.triggerAttackRelease(notesToPlay, this.data.subdivision);
     },
     indexArray: function (count) {
@@ -99,5 +102,8 @@ AFRAME.registerComponent('step-sequencer', {
             indices.push(i);
         }
         return indices;
+    },
+    getNoteWithOctave: function (letter, octave) {
+
     }
 })

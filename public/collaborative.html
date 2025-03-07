@@ -3,6 +3,7 @@
         <title>WebXR Multi-User Experience</title>
         <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
         <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+        
         <!-- <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script> -->
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://unpkg.com/tone"></script>
@@ -10,6 +11,7 @@
         <script src="js/teleport-pad.js"></script>
         <script src="js/collaborative/step-sequencer.js"></script>
         <script src="js/collaborative/note-box.js"></script>
+        <script src="js/collaborative/animated-button.js"></script>
 
         <!-- Stylesheet links -->
         <link rel="stylesheet" href="/css/user-gesture.css">
@@ -51,6 +53,7 @@
                     <img id="buttonGreen" src="assets/images/buttonGreen.png" alt="">
                     <img id="buttonMagenta" src="assets/images/buttonMagenta.png" alt="">
                     <img id="buttonOrange" src="assets/images/buttonOrange.png" alt="">
+                    <a-asset-item id="control-panel-model" src="assets/models/controlPanel.glb" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
                 </a-assets>
                 <!-- Player -->
                 <a-entity id="player"
@@ -63,22 +66,25 @@
                     <!-- Raycaster -->
                     <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
                 </a-entity>
-
                 <!-- Lights -->
     
-                <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity>
+                <!-- <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity> -->
+                <!-- <a-entity geometry="primitive: torus; radius: 1.99; radiusTubular: 0.015" rotation="-90 0 0" position="0 0.2508 0" material="color: #d100e0; emissive: #b300a4; emissiveIntensity: 9.34"></a-entity> -->
 
+                <a-entity geometry="primitive: torus; radius: 1.99; radiusTubular: 0.015" rotation="-90 0 0" position="0 0.2508 0" material="color: #EA00FF; emissive: #00FF44; emissiveIntensity: 9.34"></a-entity>
 
                 <!-- Stage -->
-                
+
+                <a-entity geometry="primitive: cylinder; height: 0.53; segmentsHeight: 16; radius: 2" material="color: #180345"></a-entity>
+                <a-entity geometry="primitive: cylinder; height: 0.53; segmentsHeight: 16; radius: 2" position="0 -0.02401 0" material="color: #180345"></a-entity>
                 <!-- Buttons -->
-                <a-box id="button-pedestal" material="" geometry="height: 0.5; width: 1.89" position="0 0.12697 0">
-                    <a-box id="start-loop-button" class="interactive" material="color: green;" geometry="depth: 0.25; height: 0.32; width: 0.6" position="-0.43331 0.56135 0"></a-box>
-                    <a-box id="stop-loop-button" class="interactive" material="color: red;" geometry="depth: 0.25; height: 0.32; width: 0.6" position=".2 0.56135 0"></a-box>
-                </a-box>
+                <a-entity geometry="primitive: plane" material="color: #180345; shader: flat" rotation="-46.197 0 0" position="0 0.59 0">
+                    <a-box id="start-loop-button" class="interactive" animated-button material="color: green;" geometry="depth: 0.25; height: 0.32; width: 0.6" position="-0.43331 0.56135 0"></a-box>
+                    <a-box id="stop-loop-button" class="interactive" animated-button material="color: red;" geometry="depth: 0.25; height: 0.32; width: 0.6" position=".2 0.56135 0"></a-box>
+                </a-entity>
 
                 <!-- Step sequencer -->
-                <a-entity id="step-sequencer" step-sequencer position="2.5 0 -4">
+                <a-entity id="step-sequencer" step-sequencer position="-7 0 -3">
                     <!-- <a-entity id="col-1" position="-5 0 0">
                         <a-box class="interactive" note-box position="0 2.4 0"></a-box>
                         <a-box class="interactive" note-box position="0 1.8 0"></a-box>
