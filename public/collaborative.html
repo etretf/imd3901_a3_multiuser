@@ -66,7 +66,7 @@
                 <audio id="tom-2-808" src="assets/sounds/8n/808/Tom2.wav" preload="auto" crossorigin="anonymous"></audio>
                 <audio id="tom-3-808" src="assets/sounds/8n/808/Tom3.wav" preload="auto" crossorigin="anonymous"></audio>
 
-                <a-asset-item id="control-panel-model" src="assets/models/controlPanel.glb" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
+                <a-asset-item id="neon-glasses-model" src="assets/models/neon_party_glasses.glb" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
             </a-assets>
             <!-- Player -->
             <a-entity id="player"
@@ -77,180 +77,124 @@
                 position="0 8 0"
             >
                 <!-- Raycaster -->
-                <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+                <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:10; interval:200; objects:.interactive"></a-entity>
             </a-entity>
-            <!-- Lights -->
 
-            <!-- <a-entity light="intensity: 0.5;" position="0 8.35603 6.40487" rotation="33.30374479977423 179.9998479605043 179.9998479605043"></a-entity> -->
-            <!-- <a-entity geometry="primitive: torus; radius: 1.99; radiusTubular: 0.015" rotation="-90 0 0" position="0 0.2508 0" material="color: #d100e0; emissive: #b300a4; emissiveIntensity: 9.34"></a-entity> -->
+
+            <!-- Teleport pads -->
+
+            <a-cylinder teleport-pad position="0 6.65 0"></a-cylinder>
+            
+            <a-cylinder teleport-pad="" position="3.971 6.75347 -2.55707"></a-cylinder>
+            <a-cylinder teleport-pad="" position="-3.97118 6.75347 -2.55707"></a-cylinder>
+
+            <a-cylinder teleport-pad="" position="0 6.65 -3.29316"></a-cylinder>
+            <a-cylinder teleport-pad="" position="0 6.65 -3.27969"></a-cylinder>
+            <a-cylinder teleport-pad="" position="-2.472 6.65 -0.83259" ></a-cylinder>
+            <a-cylinder teleport-pad="" position="2.472 6.65 -0.833"></a-cylinder>
+            <a-cylinder teleport-pad="" position="-3.07545 6.65 1.316"></a-cylinder>
+            <a-cylinder teleport-pad="" position="3.075 6.65 1.316"></a-cylinder>
+            <a-cylinder teleport-pad="" position="0 6.65 1.67508"></a-cylinder>
+            
+            <a-cylinder teleport-pad="" position="0 6.753 3.45533"></a-cylinder>
+            <a-cylinder teleport-pad="" position="0 6.753 6.10875"></a-cylinder>
+            <a-cylinder teleport-pad="" position="0.838 6.753 6.57916"></a-cylinder>
+            <a-cylinder teleport-pad="" position="-0.83837 6.753 6.579"></a-cylinder>
 
 
             <!-- Stage -->
 
-            <a-entity id="center-stage" geometry="primitive: cylinder; height: 0.53; radius: 6.39; segmentsHeight: 16" position="0 6.411 0" material="color: #180345">
+            <a-entity id="main-stage" geometry="primitive: cylinder; height: 0.53; radius: 6.39; segmentsHeight: 16" position="0 6.411 0" material="color: #180345">
                 <a-entity geometry="primitive: torus; radius: 6.4; radiusTubular: 0.055" rotation="-90 0 0" position="0 0.2508 0" material="color: #EA00FF; emissive: #00FF44; emissiveIntensity: 9.34"></a-entity>
-                            <!-- Buttons -->
+                
+                <!-- UI -->
+                
+                <!-- Buttons -->
                 <a-entity position="0 0.5 -1">
-                    <!-- <a-box id="start-loop-button" class="interactive" animated-button material="color: green; shader: flat;" geometry="depth: 0.25; height: 0.32; width: 0.6" position="-0.43331 0.56135 0"></a-box>
-                    <a-box id="stop-loop-button" class="interactive" animated-button material="color: red; shader: flat;" geometry="depth: 0.25; height: 0.32; width: 0.6" position=".2 0.56135 0"></a-box>
-                    <a-box id="clear-button" class="interactive" animated-button material="color: ;" geometry="depth: 0.25; height: 0.32; width: 0.6" position=".2 0.56135 0"></a-box> -->
                     <a-image id="start-loop-button" class="interactive" src="#buttonGreen" rotation="-20 20 0" position="-1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Play; wrapCount: 8"></a-image>
                     <a-image id="stop-loop-button" class="interactive" src="#buttonOrange" rotation="-20 0 0" position="0 0.3 -1" width="0.8" height="0.4" text="align: center; value: Stop; wrapCount: 8"></a-image>
                     <a-image id="clear-button" class="interactive" src="#buttonMagenta" rotation="-20 -20 0" position="1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Clear; wrapCount: 8"></a-image>
                 </a-entity>
             </a-entity>
-            <a-entity id="drum-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="-4.08932 6.99 5.88722" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.035" rotation="-90 0 0" position="0 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
 
-                <!-- Drum pads -->
-                <a-entity id="drum-kit">
-                    <!-- <a-cylinder id="snare-pad" drum-pad="beatType: snare" class="interactive" height="0.1" radius="0.4" material="color: #180345" position="0 1 0">
-                        <a-entity geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" rotation="-90 0 0" position="0 0.04759 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
-                    </a-cylinder> -->
-                    <a-cylinder drum-pad="beatType: bass; padId: bass-pad" position="0 1 0" rotation="59.99999999999999 -75 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="bass-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #F100A9; emissive: #F100A9"></a-entity><a-entity id="bass-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #F100A9; emissive: #F100A9"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: clap; padId: clap-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="clap-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #EA00FF; emissive: #EA00FF"></a-entity><a-entity id="clap-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #EA00FF; emissive: #EA00FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: cowbell; padId: cowbell-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="cowbell-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #9000FF; emissive: #9000FF"></a-entity><a-entity id="cowbell-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #9000FF; emissive: #9000FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: hihat; padId: hihat-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="hihat-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #4D00FF; emissive: #4D00FF"></a-entity><a-entity id="hihat-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #4D00FF; emissive: #4D00FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: hihatOpen; padId: hihatOpen-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="hihatOpen-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00C8FF; emissive: #00C8FF"></a-entity><a-entity id="hihatOpen-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00C8FF; emissive: #00C8FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: ride; padId: ride-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="ride-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #04FFFF; emissive: #04FFFF"></a-entity><a-entity id="ride-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #04FFFF; emissive: #04FFFF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: snare; padId: snare-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="snare-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FFB7; emissive: #00FFB7"></a-entity><a-entity id="snare-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FFB7; emissive: #00FFB7"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom1; padId: tom1-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom1-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FF44; emissive: #00FF44"></a-entity><a-entity id="tom1-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FF44; emissive: #00FF44"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom2; padId: tom2-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom2-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #BBFF00; emissive: #BBFF00"></a-entity><a-entity id="tom2-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #BBFF00; emissive: #BBFF00"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom3; padId: tom3-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom3-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #FFFF00; emissive: #FFFF00"></a-entity><a-entity id="tom3-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #FFFF00; emissive: #FFFF00"></a-entity></a-cylinder>
-                </a-entity>
+            <a-entity id="left-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="-3.85507 6.66555 -4.94132" material="color: #180345">
+                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="0 0.09396 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>                
             </a-entity>
-            <a-entity id="drum-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="-4.08932 6.99 5.88722" material="color: #180345">
+            <a-entity id="right-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="3.85 6.66103 -4.94132" material="color: #180345">
+                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="-0.03545 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
+            </a-entity>
+            <a-entity id="control-centre" geometry="primitive: cylinder; height: 0.23; radius: 0; segmentsHeight: 16" position="-0.0345 6.66103 0.21197" material="color: #180345">
+                <a-entity geometry="primitive: torus; radius: 1.59; radiusTubular: 0.025" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #a4f807; emissive: #85ff15; emissiveIntensity: 9.34"></a-entity><a-entity geometry="primitive: torus; radiusTubular: 0.02" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #15ff09; emissive: #21d900; emissiveIntensity: 9.34"></a-entity>
+            </a-entity>
+            <a-entity id="drum-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="0 6.67277 5.53113" material="color: #180345">
                 <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.035" rotation="-90 0 0" position="0 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
-
                 <!-- Drum pads -->
-                <a-entity id="drum-kit">
-                    <!-- <a-cylinder id="snare-pad" drum-pad="beatType: snare" class="interactive" height="0.1" radius="0.4" material="color: #180345" position="0 1 0">
-                        <a-entity geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" rotation="-90 0 0" position="0 0.04759 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
-                    </a-cylinder> -->
-                    <a-cylinder drum-pad="beatType: bass; padId: bass-pad" position="0 1 0" rotation="59.99999999999999 -75 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="bass-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #F100A9; emissive: #F100A9"></a-entity><a-entity id="bass-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #F100A9; emissive: #F100A9"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: clap; padId: clap-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="clap-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #EA00FF; emissive: #EA00FF"></a-entity><a-entity id="clap-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #EA00FF; emissive: #EA00FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: cowbell; padId: cowbell-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="cowbell-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #9000FF; emissive: #9000FF"></a-entity><a-entity id="cowbell-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #9000FF; emissive: #9000FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: hihat; padId: hihat-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="hihat-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #4D00FF; emissive: #4D00FF"></a-entity><a-entity id="hihat-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #4D00FF; emissive: #4D00FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: hihatOpen; padId: hihatOpen-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="hihatOpen-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00C8FF; emissive: #00C8FF"></a-entity><a-entity id="hihatOpen-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00C8FF; emissive: #00C8FF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: ride; padId: ride-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="ride-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #04FFFF; emissive: #04FFFF"></a-entity><a-entity id="ride-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #04FFFF; emissive: #04FFFF"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: snare; padId: snare-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="snare-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FFB7; emissive: #00FFB7"></a-entity><a-entity id="snare-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FFB7; emissive: #00FFB7"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom1; padId: tom1-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom1-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FF44; emissive: #00FF44"></a-entity><a-entity id="tom1-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #00FF44; emissive: #00FF44"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom2; padId: tom2-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom2-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #BBFF00; emissive: #BBFF00"></a-entity><a-entity id="tom2-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #BBFF00; emissive: #BBFF00"></a-entity></a-cylinder>
-                    <a-cylinder drum-pad="beatType: tom3; padId: tom3-pad" position="0 1 0" material="shader: flat; color: #000" class="interactive" height="0.05" radius="0.4" animation__hit="dur: 300; elasticity: 800; from: [object Object]; property: scale; startEvents: mousedown; to: [object Object]"><a-entity id="tom3-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #FFFF00; emissive: #FFFF00"></a-entity><a-entity id="tom3-torus" geometry="primitive: torus; radius: 0.42; radiusTubular: 0.015" position="0 0.04 0" rotation="-90 0 0" material="color: #FFFF00; emissive: #FFFF00"></a-entity></a-cylinder>
+                <a-entity id="drum-kit" position="0 0.55 0">
+                    <a-cylinder id="bass-pad" drum-pad="beatType: bass" position="-1 0 -2" rotation="70 0 -20"></a-cylinder>
+                    <a-cylinder id="clap-pad" drum-pad="beatType: clap" position="-1.915 1 -1.5" rotation="90 0 -40"></a-cylinder>
+                    <a-cylinder id="cowbell-pad" drum-pad="beatType: cowbell" position="2.169 1 -0.212" rotation="90 0 80"></a-cylinder>
+                    <a-cylinder id="hihat-pad" drum-pad="beatType: hihat" position="-2.490 0 -0.610" rotation="70 58.749 -2.465"></a-cylinder>
+                    <a-cylinder id="hihatOpen-pad" drum-pad="beatType: hihatOpen" position="-2.490 1 -0.610" rotation="90 58.749 -2.465"></a-cylinder>
+                    <a-cylinder id="ride-pad" drum-pad="beatType: ride" position="1.753 1 -1.122" rotation="90 0 61.380"></a-cylinder>
+                    <a-cylinder id="snare-pad" drum-pad="beatType: snare" position="-1.915 0 -1.5" rotation="70 0 -40"></a-cylinder>
+                    <a-cylinder id="tom1-pad" drum-pad="beatType: tom1" position="1.035 0 -1.713" rotation="75 0 32.650"></a-cylinder>
+                    <a-cylinder id="tom2-pad" drum-pad="beatType: tom2" position="1.753 0 -1.122" rotation="75 0 61.380"></a-cylinder>
+                    <a-cylinder id="tom3-pad" drum-pad="beatType: tom3" position="2.169 0 -0.212" rotation="75 0 80"></a-cylinder>
                 </a-entity>
             </a-entity>
 
             <!-- Step sequencer -->
-            <a-entity id="step-sequencer" step-sequencer position="-7 7 -5">
-                <!-- <a-entity id="col-1" class="note-column" position="-5 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-2" class="note-column" position="-4.2 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-3" class="note-column" position="-3.4 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-4" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-5" class="note-column" position="-1.8 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-6" class="note-column" position="-1 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-7" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-8" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-9" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-10" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-11" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-12" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-13" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-14" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-15" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box>
-                </a-entity>
-                <a-entity id="col-16" class="note-column" position="-2.6 0 0">
-                    <a-box note-box position="0 2.4 0"></a-box>
-                    <a-box note-box position="0 1.8 0"></a-box>
-                    <a-box note-box position="0 1.2 0"></a-box>
-                    <a-box note-box position="0 0.6 0"></a-box> -->
-                </a-entity>
-            </a-entity>
-
-            <!-- Demo music blocks -->
+            <a-entity id="step-sequencer" step-sequencer position="-7 7 -6"></a-entity>
 
             <a-entity environment="preset: starry;"></a-entity>
         </a-scene>
         <script>
             const socket = io();
 
-            socket.on('connect', () => {
-                console.log('Hello ' + socket.id);
-                socket.emit('player_connect');
+            socket.on('get_player_info', () => {
+                const playerEl = document.querySelector('#player');
+
+                socket.emit('set_player_info', {
+                    id: socket.id,
+                    position: playerEl.getAttribute('position'),
+                    rotation: playerEl.getAttribute('rotation')
+                });
             });
+
+            socket.on('update_client_player_transforms', (data) => {
+                const {playerTransforms} = data;
+                const playerIds = Object.keys(playerTransforms);
+
+                playerIds.forEach((id) => {
+                    const player = playerTransforms[id];
+
+                    if (id === socket.id) {
+                        return
+                    }
+
+                    const playerElementId = `player-${id}`;
+                    let playerEl = document.querySelector('#' + playerElementId);
+                
+                    if (playerEl === null) {
+                        playerEl = document.createElement('a-entity');
+                        playerEl.setAttribute('id', `player-${id}`);
+                        document.querySelector('a-scene').appendChild(playerEl);
+                    }
+
+                    playerEl.setAttribute('position', player.position);
+                    playerEl.setAttribute('rotation', player.rotation);
+                    playerEl.setAttribute('gltf-model', '#neon-glasses-model');
+                })
+            });
+
+            socket.on('player_disconnect', (data) => {
+                const playerToDelete = document.querySelector('#player-' + data.id);
+
+                if (playerToDelete !== null) {
+                    playerToDelete.parentNode.removeChild(playerToDelete);
+                }
+            })
+
         </script>
     </body>
 </html>

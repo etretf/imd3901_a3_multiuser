@@ -64,8 +64,6 @@ AFRAME.registerComponent('note-box', {
         CONTEXT_AF.el.setAttribute('width', boxSize);
         CONTEXT_AF.el.setAttribute('height', boxSize);
         CONTEXT_AF.el.setAttribute('depth', boxSize);
-        CONTEXT_AF.el.setAttribute('id', `col-${CONTEXT_AF.data.colIdx+1}`);
-        CONTEXT_AF.el.classList.add('interactive');
 
         // Set box note and colour
         CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
@@ -146,7 +144,8 @@ AFRAME.registerComponent('note-box', {
             // Update material colour
             CONTEXT_AF.el.setAttribute('material', {
                 color: CONTEXT_AF.data.colour,
-                emissive: NOTE_EMISSION_COLOURS[noteIdx]
+                emissive: NOTE_EMISSION_COLOURS[noteIdx],
+                emissiveIntensity: 1.5
             });
             // Emit event to step sequencer to update note
             CONTEXT_AF.sequencerEl.emit('note-change', {note: CONTEXT_AF.data.note, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx});
@@ -170,6 +169,13 @@ AFRAME.registerComponent('note-box', {
                 CONTEXT_AF.el.setAttribute('note-box', 'noteIdx', data.noteIdx);
             }
         });
+
+        socket.on('update_client_clear_matrix', () => {
+            console.log('clear the sequence from server');
+            CONTEXT_AF.el.setAttribute('note-box', {...CONTEXT_AF.el.getAttribute('note-box'),
+                noteIdx: 0
+            });
+        })
     },
     update: function () {
         const noteIdx = this.data.noteIdx % 13;
@@ -180,7 +186,8 @@ AFRAME.registerComponent('note-box', {
         // Update material colour
         this.el.setAttribute('material', {
             color: this.data.colour,
-            emissive: NOTE_EMISSION_COLOURS[noteIdx]
+            emissive: NOTE_EMISSION_COLOURS[noteIdx],
+            emissiveIntensity: 1.5
         });
         // Emit event to step sequencer to update note
         this.sequencerEl.emit('note-change', {note: this.data.note, colIdx: this.data.colIdx, rowIdx: this.data.rowIdx});

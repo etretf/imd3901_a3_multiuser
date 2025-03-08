@@ -52,7 +52,7 @@ AFRAME.registerComponent('drum-pad', {
         // Set attributes
         CONTEXT_AF.el.classList.add('interactive');
         CONTEXT_AF.el.setAttribute('height', 0.05);
-        CONTEXT_AF.el.setAttribute('radius', 0.4);
+        CONTEXT_AF.el.setAttribute('radius', 0.35);
         CONTEXT_AF.el.setAttribute('material', {
             color: DRUM_COLOUR,
             shader: 'flat'
@@ -65,7 +65,7 @@ AFRAME.registerComponent('drum-pad', {
         torusEl.setAttribute('id', `${CONTEXT_AF.data.beatType}-torus`);
         torusEl.setAttribute('geometry', {
             primitive: 'torus',
-            radius: 0.42,
+            radius: 0.37,
             radiusTubular: 0.015,
         });
         torusEl.setAttribute('position', '0 0.04 0');

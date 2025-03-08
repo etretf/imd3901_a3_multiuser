@@ -62,8 +62,7 @@ const ROUND_STATE = {
 
 
 // Server-persistent data
-let appMode;
-let playerPositions = {};
+let playerTransforms = {};
 
 // Competitive game data
 let answerKey = [];
@@ -83,7 +82,7 @@ let stepSequencerData = {
     octave: 4,
     isPlaying: false
 };
-let matrix = generateMatrixArray();
+let matrix = generateEmptyMatrixArray();
 
 
 io.on('connection', (socket) => {
@@ -101,12 +100,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(socket.id + ' disconnected.')
-        // Delete player from player positions
-        // delete playerPositions[socket.id];
+        // Delete player from player transforms data
+        delete playerTransforms[socket.id];
         players = players.filter(player => player.id !== socket.id);
 
-        console.log(players);
-        io.emit('player_disconnect', socket.id);
+        io.emit('player_disconnect', {id: socket.id});
     });
 
     // Competitive game events
@@ -120,29 +118,21 @@ io.on('connection', (socket) => {
             console.log('Added player to list: ' + socket.id);
         }
         player.ready = true;
-        console.log(player);
-        console.log(players);
 
         if (players.length > 1 && players.every(player => player.ready === true)) {
-            console.log('ALL PLAYERS ARE READY');
-
             gameState = GAME_STATES.ACTIVE;
             roundState = ROUND_STATE.PREPLAY;
             io.emit('update_game_state', {state: gameState, roundState});
 
-            console.log('emitted update game state');
             answerKey = generateRandomNotes();
 
             io.emit('play_note', {note: answerKey[roundNum]});
-            console.log('emitted note play');
         }
-        console.log(player.ready);
 
         io.emit('get_player_data', {players});
     });
 
     socket.on('note_played', (data) => {
-        console.log('note was played');
         roundState = ROUND_STATE.POSTPLAY;
         io.emit('update_game_state', {state: gameState, roundState});
     });
@@ -152,27 +142,20 @@ io.on('connection', (socket) => {
             return
         }
         if (data.note === answerKey[roundNum] && roundResults[roundNum] === undefined) {
-            console.log(data.note, answerKey[roundNum], roundResults[roundNum]);
             let player = players.find(player => player.id === data.id);
             player.winCount += 1;
             roundResults.push(player.id)
             roundState = ROUND_STATE.RESULT;
             
             if (roundNum === numRounds - 1) {
-                console.log('game finished');
-
                 gameState = GAME_STATES.FINISHED;
                 roundState = ROUND_STATE.RESULT;
                 io.emit('game_over', {state: gameState, roundState, players, roundResults});
             } else {
-                console.log('round won by: ' + data.id);
-
                 io.emit('round_result', {id: data.id, gameState, roundState});
 
                 setTimeout(() => {
-                    console.log('round num was: ' + roundNum);
                     roundNum++;
-                    console.log('round num is now: ' + roundNum);
                     roundState = ROUND_STATE.PREPLAY;
                     io.emit('update_game_state', {state: gameState, roundState});
                     io.emit('play_note', {note: answerKey[roundNum]});
@@ -208,14 +191,22 @@ io.on('connection', (socket) => {
         io.emit('update_client_is_playing', {isPlaying: stepSequencerData.isPlaying});
     });
 
+    socket.on('update_server_clear_matrix', (data) => {
+        matrix = generateEmptyMatrixArray();
+        io.emit('update_client_clear_matrix');
+    });
+
     socket.on('send_server_note', (data) => {
         io.emit('send_client_note', (data));
     });
 
     // Updating player positions on server-side
     socket.on('set_player_info', (data) => {
-        playerPositions[data.id] = data.pos;
-        io.emit('update_co', playerPositions);
+        playerTransforms[data.id] = {
+            position: data.position,
+            rotation: data.rotation
+        };
+        io.emit('update_client_player_transforms', {playerTransforms});
     });
 
     // Looping events
@@ -226,8 +217,6 @@ io.on('connection', (socket) => {
 // Competitive game functions
 
 function generateRandomNotes () {
-    console.log('make a note array');
-
     const keyArrLen = KEYS.length;
     const randKeyArr = [];
     for (let i = 0; i < numRounds; i++) {
@@ -243,7 +232,7 @@ function generateRandomNotes () {
 
 // Collaborative game functions
 
-function generateMatrixArray () {
+function generateEmptyMatrixArray () {
     const indexedColumns = getIndexedArray(stepSequencerData.columns);
     const indexedRows = getIndexedArray(stepSequencerData.rows);
     return indexedColumns.map(() => indexedRows.map(() => undefined));

@@ -143,13 +143,10 @@
             // Competitive game logic
 
             socket.on('connect', () => {
-                console.log('Hello ' + socket.id);
                 document.querySelector('#game-manager').setAttribute('game-manager', 'currentPlayerId', socket.id);
-                console.log(document.querySelector('#game-manager'));
             });
 
             socket.on('update_game_state', (data) => {
-                console.log('update game state');
                 const gameManagerEl = document.querySelector('#game-manager');
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
                 gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
@@ -158,24 +155,18 @@
             socket.on('get_player_data', (data) => {
                 const numReadyPlayers = data.players.filter(player => player.ready === true).length;
                 const totalNumPlayers = data.players.length;
-                console.log('num players - ' + totalNumPlayers);
                 const minTotalNumPlayers = totalNumPlayers === 1 ? 2 : totalNumPlayers;
                 const playerCountText = `${numReadyPlayers}/${minTotalNumPlayers}`
                 document.querySelector('#player-count').setAttribute('text', text=`value: ${playerCountText}; wrapCount: 12; align:center;`);
             });
 
             socket.on('play_note', (data) => {
-                console.log('Play a note');
-                console.log('Note: ' + data.note)
                 const soundPlayer = document.querySelector('#sound-player');
                 soundPlayer.setAttribute('play-note', {note: data.note});
                 soundPlayer.emit('play_note', data.note);
             });
 
             socket.on('round_result', (data) => {
-                console.log('Round winner is ' + data.id);
-                console.log(data);
-
                 const gameManagerEl = document.querySelector('#game-manager')
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
                 gameManagerEl.setAttribute('game-manager', 'roundWinner', data.id);
@@ -186,8 +177,6 @@
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
                 gameManagerEl.setAttribute('game-manager', 'roundResults', data.roundResults);
                 gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
-                console.log(data);
-                debugger
             });
             
             // Competitive game logic end
