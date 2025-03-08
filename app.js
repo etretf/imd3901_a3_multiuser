@@ -74,20 +74,30 @@ let roundNum = 0;
 const numRounds = 5;
 let players = [];
 
-// player schema
-// id: string
-// ready: bool
-// winCount: num
+// Step sequencer scene data
+
+let stepSequencerData = {
+    columns: 16,
+    rows: 4,
+    subdivision: '8n',
+    octave: 4,
+    isPlaying: false
+};
+let matrix = generateMatrixArray();
 
 
 io.on('connection', (socket) => {
-    console.log(socket.id + ' connected.')
+    console.log(socket.id + ' connected.');
 
     // Add players to state
     if (!players.includes(socket.id)) {
         players.push({id: socket.id, ready: false, winCount: 0});
         console.log('Added player to list: ' + socket.id);
     }
+
+    socket.on('player_connect', () => {
+        io.emit('init_note_matrix', {matrix});
+    });
 
     socket.on('disconnect', () => {
         console.log(socket.id + ' disconnected.')
@@ -97,13 +107,18 @@ io.on('connection', (socket) => {
 
         console.log(players);
         io.emit('player_disconnect', socket.id);
-    })
+    });
 
     // Competitive game events
 
     socket.on('set_player_ready', (data) => {
         let player = players.find(player => player.id === data.id);
 
+        if (!player) {
+            players.push({id: socket.id, ready: false, winCount: 0});
+            player = players.find(player => player.id === data.id);
+            console.log('Added player to list: ' + socket.id);
+        }
         player.ready = true;
         console.log(player);
         console.log(players);
@@ -115,6 +130,7 @@ io.on('connection', (socket) => {
             roundState = ROUND_STATE.PREPLAY;
             io.emit('update_game_state', {state: gameState, roundState});
 
+            console.log('emitted update game state');
             answerKey = generateRandomNotes();
 
             io.emit('play_note', {note: answerKey[roundNum]});
@@ -123,19 +139,13 @@ io.on('connection', (socket) => {
         console.log(player.ready);
 
         io.emit('get_player_data', {players});
-    })
-
-
-    socket.on('play_note', (data) => {
-        console.log(data);
-        io.emit('send_note', {id: socket.id, ...data});
-    })
+    });
 
     socket.on('note_played', (data) => {
         console.log('note was played');
         roundState = ROUND_STATE.POSTPLAY;
         io.emit('update_game_state', {state: gameState, roundState});
-    })
+    });
 
     socket.on('piano_note', (data) => {
         if (gameState !== GAME_STATES.ACTIVE) {
@@ -169,7 +179,7 @@ io.on('connection', (socket) => {
                 }, 3000);
             }
         } 
-    })
+    });
 
     socket.on('restart_game', () => {
         answerKey = [];
@@ -177,8 +187,30 @@ io.on('connection', (socket) => {
         gameState = GAME_STATES.INSTRUCTIONS;
         roundState = ROUND_STATE.PREPLAY;
         roundNum = 0;
+        players = [];
         io.emit('update_game_state', {state: gameState, roundState});
-    })
+    });
+
+
+    // Collaborative events
+
+    socket.on('send_note_box', (data) => {
+        const {colIdx, rowIdx, noteIdx} = data;
+
+        // Update note matrix
+        matrix[colIdx][rowIdx] = noteIdx;
+        io.emit('update_note_box', data);
+    });
+
+    socket.on('update_server_is_playing', (data) => {
+        stepSequencerData.isPlaying = data.isPlaying;
+
+        io.emit('update_client_is_playing', {isPlaying: stepSequencerData.isPlaying});
+    });
+
+    socket.on('send_server_note', (data) => {
+        io.emit('send_client_note', (data));
+    });
 
     // Updating player positions on server-side
     socket.on('set_player_info', (data) => {
@@ -188,11 +220,14 @@ io.on('connection', (socket) => {
 
     // Looping events
     player_update();
-})
+});
+
 
 // Competitive game functions
 
 function generateRandomNotes () {
+    console.log('make a note array');
+
     const keyArrLen = KEYS.length;
     const randKeyArr = [];
     for (let i = 0; i < numRounds; i++) {
@@ -206,7 +241,23 @@ function generateRandomNotes () {
     return randKeyArr
 }
 
-function player_update() {
+// Collaborative game functions
+
+function generateMatrixArray () {
+    const indexedColumns = getIndexedArray(stepSequencerData.columns);
+    const indexedRows = getIndexedArray(stepSequencerData.rows);
+    return indexedColumns.map(() => indexedRows.map(() => undefined));
+}
+
+function getIndexedArray (count) {
+    const indices = [];
+    for (let i = 0; i < count; i++) {
+        indices.push(i);
+    }
+    return indices;
+}
+
+function player_update () {
     setTimeout(player_update, 20);
     io.emit('get_player_info');
 }

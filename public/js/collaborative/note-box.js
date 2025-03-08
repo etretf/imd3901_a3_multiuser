@@ -25,7 +25,7 @@ const NOTE_COLOURS = [
 ]
 
 const NOTE_EMISSION_COLOURS = [
-    '#202020',
+    '#404040',
     '#BE0085',
     '#AF00BF',
     '#6B00BD',
@@ -58,16 +58,21 @@ AFRAME.registerComponent('note-box', {
 
         // Init position
         CONTEXT_AF.data.startPosition = CONTEXT_AF.el.object3D.position;
-        // Set box dimensions
-        CONTEXT_AF.el.setAttribute('width', 0.5);
-        CONTEXT_AF.el.setAttribute('height', 0.5);
-        CONTEXT_AF.el.setAttribute('depth', 0.5);
+
+        // Set box attributes
+        const boxSize = 0.4;
+        CONTEXT_AF.el.setAttribute('width', boxSize);
+        CONTEXT_AF.el.setAttribute('height', boxSize);
+        CONTEXT_AF.el.setAttribute('depth', boxSize);
+        CONTEXT_AF.el.setAttribute('id', `col-${CONTEXT_AF.data.colIdx+1}`);
+        CONTEXT_AF.el.classList.add('interactive');
+
         // Set box note and colour
         CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
         CONTEXT_AF.data.colour = NOTE_COLOURS[CONTEXT_AF.data.noteIdx];
         CONTEXT_AF.el.setAttribute('material', {
             color: NOTE_COLOURS[CONTEXT_AF.data.noteIdx],
-            emissive: NOTE_COLOURS[CONTEXT_AF.data.noteIdx],
+            emissive: NOTE_EMISSION_COLOURS[CONTEXT_AF.data.noteIdx],
             emissiveIntensity: 1.5
         });
 
@@ -105,39 +110,26 @@ AFRAME.registerComponent('note-box', {
             dur: 200
         });
 
-        // Add note text
-        const textEl = document.createElement('a-text');
-        textEl.setAttribute('position', {x: 0, y: 0, z: 0.5});
-        textEl.setAttribute('width', 0.5);
-        CONTEXT_AF.el.appendChild(textEl);
-
         // Select sequencer element
         CONTEXT_AF.sequencerEl = document.querySelector('#step-sequencer');
 
-        // CONTEXT_AF.el.setAttribute('animation__highlight', {
-        //     property: 'material.color',
-        //     type: 'color',
-        //     to: '#FFF',
-        //     startEvents: 'note-animate',
-        //     dur: 200
-        // });
+        // Create sampler for playing notes
+        CONTEXT_AF.sampler = new Tone.Sampler({
+            urls: {
+                C3: '../assets/sounds/8n/C3.wav',
+                C4:  '../assets/sounds/8n/C4.wav',
+                E4:  '../assets/sounds/8n/E4.wav',
+                C5:  '../assets/sounds/8n/C5.wav',
+            },
+            onload: () => {
+                CONTEXT_AF.el.addEventListener('mousedown', function () {
+                    // CONTEXT_AF.sampler.triggerAttackRelease(CONTEXT_AF.data.note, "4n");
+        
+                    // socket.emit('piano_note', {note: CONTEXT_AF.data.note, id: socket.id});
+                })
+            }
+        }).toDestination();
 
-        // CONTEXT_AF.el.setAttribute('animation__recolor', {
-        //     property: 'material.color',
-        //     type: 'color',
-        //     to: NOTE_COLOURS[CONTEXT_AF.data.noteIdx],
-        //     startEvents: 'note-animate-recolor',
-        //     dur: 100
-        // });
-
-        // CONTEXT_AF.el.addEventListener('note-animate-end', function () {
-        //     setTimeout(function () {
-        //         console.log(CONTEXT_AF.data.colour);
-        //         CONTEXT_AF.el.emit('note-animate-recolor');
-        //     }, 300);
-        // });
-
-        // Add event listeners
 
         // On click - change the note
         CONTEXT_AF.el.addEventListener('click', function (e) {
@@ -146,10 +138,10 @@ AFRAME.registerComponent('note-box', {
             const noteIdx = CONTEXT_AF.data.noteIdx % 13;
 
             // Update note and colour data
-            CONTEXT_AF.data.note = NOTES[CONTEXT_AF.data.noteIdx];
-            CONTEXT_AF.data.colour = NOTE_COLOURS[CONTEXT_AF.data.noteIdx];
+            CONTEXT_AF.data.note = NOTES[noteIdx];
+            CONTEXT_AF.data.colour = NOTE_COLOURS[noteIdx];
 
-            console.log(CONTEXT_AF.data.note, CONTEXT_AF.data.colour, NOTE_EMISSION_COLOURS[noteIdx]);
+            console.log(CONTEXT_AF.data.noteIdx);
 
             // Update material colour
             CONTEXT_AF.el.setAttribute('material', {
@@ -158,9 +150,40 @@ AFRAME.registerComponent('note-box', {
             });
             // Emit event to step sequencer to update note
             CONTEXT_AF.sequencerEl.emit('note-change', {note: CONTEXT_AF.data.note, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx});
+
+            // Emit socket event
+            socket.emit('send_note_box', {noteIdx: CONTEXT_AF.data.noteIdx, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx, id: socket.id});
+        });
+
+        // Add socket event listeners
+        socket.on('init_note_matrix', (data) => {
+            const {colIdx, rowIdx} = CONTEXT_AF.data;
+            const targetNoteIdx = data.matrix[colIdx][rowIdx];
+            CONTEXT_AF.el.setAttribute('note-box', 'noteIdx', targetNoteIdx);
+        });
+
+        socket.on('update_note_box', (data) => {
+            if (data.id === socket.id) {
+                return
+            }
+            if (CONTEXT_AF.data.colIdx === data.colIdx && CONTEXT_AF.data.rowIdx === data.rowIdx) {
+                CONTEXT_AF.el.setAttribute('note-box', 'noteIdx', data.noteIdx);
+            }
         });
     },
     update: function () {
+        const noteIdx = this.data.noteIdx % 13;
+        // Update note and colour data
+        this.data.note = NOTES[noteIdx];
+        this.data.colour = NOTE_COLOURS[noteIdx];
+
+        // Update material colour
+        this.el.setAttribute('material', {
+            color: this.data.colour,
+            emissive: NOTE_EMISSION_COLOURS[noteIdx]
+        });
+        // Emit event to step sequencer to update note
+        this.sequencerEl.emit('note-change', {note: this.data.note, colIdx: this.data.colIdx, rowIdx: this.data.rowIdx});
     },
     tick: function () {
         // Add slight oscillation for y position

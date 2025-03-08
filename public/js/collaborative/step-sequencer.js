@@ -11,15 +11,55 @@ AFRAME.registerComponent('step-sequencer', {
     init: function () {
         const CONTEXT_AF = this;
 
-        // Select elements
-        CONTEXT_AF.col1 = document.querySelector('#col-1');
-        CONTEXT_AF.col2 = document.querySelector('#col-2');
-        CONTEXT_AF.col3 = document.querySelector('#col-3');
-        CONTEXT_AF.col4 = document.querySelector('#col-4');
-
         const indexedColumns = this.indexArray(CONTEXT_AF.data.columns);
         const indexedRows = this.indexArray(CONTEXT_AF.data.rows);
         CONTEXT_AF.data.matrix = indexedColumns.map(() => indexedRows.map(() => undefined));
+
+        // // Select elements
+        // CONTEXT_AF.col1 = document.querySelector('#col-1');
+        // CONTEXT_AF.col2 = document.querySelector('#col-2');
+        // CONTEXT_AF.col3 = document.querySelector('#col-3');
+        // CONTEXT_AF.col4 = document.querySelector('#col-4');
+        // CONTEXT_AF.col5 = document.querySelector('#col-5');
+        // CONTEXT_AF.col6 = document.querySelector('#col-6');
+        // CONTEXT_AF.col7 = document.querySelector('#col-7');
+        // CONTEXT_AF.col8 = document.querySelector('#col-8');
+        // CONTEXT_AF.col9 = document.querySelector('#col-9');
+        // CONTEXT_AF.col10 = document.querySelector('#col-10');
+        // CONTEXT_AF.col11 = document.querySelector('#col-11');
+        // CONTEXT_AF.col12 = document.querySelector('#col-12');
+        // CONTEXT_AF.col13 = document.querySelector('#col-13');
+        // CONTEXT_AF.col14 = document.querySelector('#col-14');
+        // CONTEXT_AF.col15 = document.querySelector('#col-15');
+        // CONTEXT_AF.col16 = document.querySelector('#col-16');
+
+        // CONTEXT_AF.columnElements = [
+        //     CONTEXT_AF.col1,
+        //     CONTEXT_AF.col2,
+        //     CONTEXT_AF.col3,
+        //     CONTEXT_AF.col4,
+        //     CONTEXT_AF.col5,
+        //     CONTEXT_AF.col6,
+        //     CONTEXT_AF.col7,
+        //     CONTEXT_AF.col8,
+        //     CONTEXT_AF.col9,
+        //     CONTEXT_AF.col10,
+        //     CONTEXT_AF.col11,
+        //     CONTEXT_AF.col12,
+        //     CONTEXT_AF.col13,
+        //     CONTEXT_AF.col14,
+        //     CONTEXT_AF.col15,
+        //     CONTEXT_AF.col16,
+        // ]
+
+        // CONTEXT_AF.columnElements.forEach((col, colIdx) => {
+        //     const rowElements = col.children;
+
+        //     debugger
+        //     for (let i = 0; i < rowElements.length; i++) {
+        //         CONTEXT_AF.data.matrix[colIdx][i] = rowElements[i];
+        //     }
+        // });
 
 
         indexedColumns.forEach((col, colIdx) => {
@@ -30,7 +70,10 @@ AFRAME.registerComponent('step-sequencer', {
             indexedRows.forEach((arr, rowIdx) => {
                 let noteBoxEl = document.createElement('a-box');
                 noteBoxEl.setAttribute('position', {x: 0, y: 0 + (rowIdx + 1) * 0.6, z: 0});
-                noteBoxEl.setAttribute('note-box', {});
+                noteBoxEl.setAttribute('note-box', {
+                    colIdx,
+                    rowIdx
+                });
                 noteBoxEl.classList.add('interactive');
                 noteBoxEl.setAttribute('id', `notebox-${colIdx}-${rowIdx}`);
 
@@ -40,10 +83,17 @@ AFRAME.registerComponent('step-sequencer', {
             })
 
             CONTEXT_AF.el.appendChild(newColEl);
-
         })
 
-        CONTEXT_AF.synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        // Create sampler for playing notes
+        CONTEXT_AF.sampler = new Tone.Sampler({
+            urls: {
+                C3: '../assets/sounds/8n/C3.mp3',
+                C4:  '../assets/sounds/8n/C4.mp3',
+                E4:  '../assets/sounds/8n/E4.mp3',
+                C5:  '../assets/sounds/8n/C5.mp3',
+            }
+        }).toDestination();
 
 
         // Init sequencer
@@ -55,12 +105,12 @@ AFRAME.registerComponent('step-sequencer', {
         // Add event listeners to buttons
 
         CONTEXT_AF.startLoopButton.addEventListener('click', function () {
-            console.log('start transport');
+            socket.emit('update_server_is_playing', {isPlaying: true});
             Tone.getTransport().start();
         });
 
         CONTEXT_AF.stopLoopButton.addEventListener('click', function () {
-            console.log('stop transport');
+            socket.emit('update_server_is_playing', {isPlaying: false});
             Tone.getTransport().stop();
         });
 
@@ -70,6 +120,18 @@ AFRAME.registerComponent('step-sequencer', {
             const {detail: {note}} = e;
             const octaveNote = () => CONTEXT_AF.getNoteWithOctave(note, CONTEXT_AF.data.octave);
             // CONTEXT_AF.data.synth.triggerAttackRelease(octaveNote, '8n');
+        })
+
+        // Add socket events
+        socket.on('update_client_is_playing', (data) => {
+            if (data.id === socket.id) {
+                return
+            }
+            if (!data.isPlaying) {
+                Tone.getTransport().stop();
+            } else {
+                Tone.getTransport().start();
+            }
         })
     },
     update: function (oldData) {
@@ -94,7 +156,9 @@ AFRAME.registerComponent('step-sequencer', {
             el.emit('note-animate');
             el.emit('note-animate-end');
         })
-        this.synth.triggerAttackRelease(notesToPlay, this.data.subdivision);
+        
+        socket.emit('send_sequence_column', {notes: notesToPlay, id: socket.id});
+        this.sampler.triggerAttackRelease(notesToPlay, this.data.subdivision);
     },
     indexArray: function (count) {
         const indices = [];

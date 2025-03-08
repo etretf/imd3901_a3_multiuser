@@ -55,11 +55,11 @@ AFRAME.registerComponent('piano-spawn', {
                 keyEl.setAttribute('height', height);
                 keyEl.setAttribute('width', width);
                 keyEl.setAttribute('material', {color: keyType})
-                keyEl.setAttribute('animation__click', {
+                keyEl.setAttribute('animation__mousedown', {
                     property: 'position',
                     from: {x: widthOffset, y: height / 4, z: 0.1},
                     to: {x: widthOffset, y: height / 2, z: 0.1},
-                    startEvents: 'click',
+                    startEvents: 'mousedown',
                     dur: 300
                 }),
                 keyEl.setAttribute('animation__mouseenter', {

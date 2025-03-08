@@ -138,7 +138,6 @@ AFRAME.registerComponent('game-manager', {
         if (gameState === GAME_STATES.FINISHED) {
             console.log('Finished game state');
             const {data: {roundResults, currentPlayerId}} = this;
-            debugger
             const numRoundsPlayed = roundResults.length
             const numRoundsWon = roundResults.filter(res => res === currentPlayerId).length;
             const isWinner = numRoundsWon >= Math.ceil(numRoundsPlayed / 2);
@@ -150,19 +149,5 @@ AFRAME.registerComponent('game-manager', {
             this.restartButton.classList.add('interactive');
 
         }
-
-    },
-    generateRandomNotes: function () {
-        const keyArrLen = KEYS.length;
-        const randKeyArr = [];
-        for (let i = 0; i < this.data.numRounds; i++) {
-            let randNum = Math.floor(Math.random() * keyArrLen);
-
-            while (randKeyArr.includes(KEYS[randNum].note)) {
-                randNm = Math.random() * keyArrLen;
-            }
-            randKeyArr.push(KEYS[randNum].note);
-        }
-        return randKeyArr;
     }
 })
