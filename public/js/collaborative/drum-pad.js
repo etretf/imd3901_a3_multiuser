@@ -1,3 +1,4 @@
+// Mapping of drum pad sounds to MIDI notes in order to be used by Tone.js's Sampler: https://tonejs.github.io/docs/15.0.4/classes/Sampler.html#constructor
 const BEAT_MAP = {
     bass: 'C1',
     clap: 'C#1',
@@ -11,6 +12,7 @@ const BEAT_MAP = {
     tom3: 'A1'
 }
 
+// Mapping drum pad sounds to note colours defined in notebox.js
 const BEAT_COLOUR_MAP = {
     bass: NOTE_COLOURS[1],
     clap: NOTE_COLOURS[2],
@@ -24,6 +26,7 @@ const BEAT_COLOUR_MAP = {
     tom3: NOTE_COLOURS[10]
 }
 
+// Mapping drum pad sounds to note emissive colours defined in notebox.js
 const BEAT_EMISSIVE_MAP = {
     bass: NOTE_EMISSION_COLOURS[1],
     clap: NOTE_EMISSION_COLOURS[2],
@@ -37,6 +40,7 @@ const BEAT_EMISSIVE_MAP = {
     tom3: NOTE_EMISSION_COLOURS[10]
 }
 
+// Drum pad base colour (not the torus outline)
 const DRUM_COLOUR = '#000';
 const DRUM_HOVER_COLOUR = '#AAA';
 
@@ -59,7 +63,7 @@ AFRAME.registerComponent('drum-pad', {
         });
         CONTEXT_AF.data.padId = CONTEXT_AF.data.beatType + '-pad';
 
-        // Create torus outline
+        // Create torus element to create highlighted ring around the drum pad
         const torusEl = document.createElement('a-entity');
         const torusElId = `${CONTEXT_AF.data.beatType}-torus`;
         torusEl.setAttribute('id', `${CONTEXT_AF.data.beatType}-torus`);
@@ -73,15 +77,13 @@ AFRAME.registerComponent('drum-pad', {
         torusEl.setAttribute('material', {
             color: BEAT_COLOUR_MAP[CONTEXT_AF.data.beatType],
             emissive: BEAT_COLOUR_MAP[CONTEXT_AF.data.beatType]
-            // emissiveIntensity: 9.34
         });
-
+        // Append it to the drum pad element
         CONTEXT_AF.el.appendChild(torusEl);
 
         CONTEXT_AF.torusEl = document.querySelector(`#${torusElId}`);
 
-        // Set animations
-
+        // Set animations for drum being clicked/tapped
         CONTEXT_AF.el.setAttribute('animation__hit', {
             property: 'scale',
             from: {x: 0.8, y: 0.8, z: 0.8},
@@ -91,33 +93,14 @@ AFRAME.registerComponent('drum-pad', {
             dur: 300
         });
 
-        // CONTEXT_AF.torusEl.setAttribute('animation__mouseenter', {
-        //     property: 'material.color',
-        //     type: 'color',
-        //     from: DRUM_COLOUR,
-        //     to: DRUM_HOVER_COLOUR,
-        //     startEvents: 'mouseenter',
-        //     dur: 300
-        // });
-
-        // CONTEXT_AF.el.setAttribute('animation__mouseleave', {
-        //     property: 'material.color',
-        //     type: 'color',
-        //     from: DRUM_HOVER_COLOUR,
-        //     to: DRUM_COLOUR,
-        //     startEvents: 'mouseleave',
-        //     dur: 300
-        // });
-
         // Add socket events
-
         socket.on('send_client_note', (data) => {
+            // Match the received drum pad note with the correct drum pad ID then play the correct beat
+            // Ignore if client originally played the beat
             if (data.padId === CONTEXT_AF.data.padId && data.id !== socket.id) {
                 CONTEXT_AF.sampler.triggerAttackRelease(BEAT_MAP[CONTEXT_AF.data.beatType], "8n");
             }
         });
-
-        // Set animations
 
         // Create sampler for playing notes
         CONTEXT_AF.sampler = new Tone.Sampler({
@@ -135,8 +118,11 @@ AFRAME.registerComponent('drum-pad', {
             }
         }).toDestination();
         
+        // Add event listener for playing drum sound on mousedown
         CONTEXT_AF.el.addEventListener('mousedown', function () {
             CONTEXT_AF.sampler.triggerAttackRelease(BEAT_MAP[CONTEXT_AF.data.beatType], "8n");
+
+            // Send event to server that note was played
             socket.emit('send_server_note', {padId: CONTEXT_AF.data.padId, id: socket.id});
         });
     }

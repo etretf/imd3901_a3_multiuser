@@ -1,3 +1,4 @@
+// Array of all possible keys to be played in the game
 const KEYS = [
     {type: 'white', note: 'C3'},
     {type: 'black', note: 'C#3'},
@@ -26,6 +27,7 @@ const KEYS = [
     {type: 'white', note: 'C5'}
 ]
 
+// Game states to control UI
 const GAME_STATES = {
     INSTRUCTIONS: 'instructions',
     WAITING: 'waiting',
@@ -33,14 +35,19 @@ const GAME_STATES = {
     FINISHED: 'finished'
 }
 
+// Text for different game states
 const SCREEN_TEXT = {
     INSTRUCTIONS: 'You will be playing an ear training game.\n\nA note will be played, then you will try to match the note on the keyboard.\n\nYou will compete with other players! Try to guess the note first to win!\n\n',
     WAITING: 'Waiting for another player to join...',
-    ROUND_PREPLAY: 'A sound will be played.',
-    ROUND_POSTPLAY: 'Match the sound!',
+    ROUND_PREPLAY: 'A note will be played.',
+    ROUND_POSTPLAY: 'Match the note!',
     FINISHED: 'Game over.'
 }
 
+// States for each round
+// Preplay is before a sound is played
+// Postplay is after a sound is played and we are waiting for the user to answer
+// Result is after someone has guessed the correct note
 const ROUND_STATE = {
     PREPLAY: 'preplay',
     POSTPLAY: 'postplay',
@@ -76,19 +83,24 @@ AFRAME.registerComponent('game-manager', {
             // Make player count UI visible
             CONTEXT_AF.playerCount.setAttribute('visible', true);
 
+            // Change the game state to WAITING to indicate that user is waiting for another player to join
             CONTEXT_AF.el.setAttribute('game-manager', {...CONTEXT_AF.data, gameState: GAME_STATES.WAITING});
+
+            // Emit event to server to mark current player as ready
             socket.emit('set_player_ready', {id: socket.id});
         });
 
         CONTEXT_AF.restartButton.addEventListener('click', function () {
+            // Emit event to server to note that user has restarted
             socket.emit('restart_game');
-        })
+        });
     },
     tick: function () {},
-    update: function (oldData) {
+    update: function () {
         const {data: {gameState, roundState}} = this
 
         if (gameState === GAME_STATES.INSTRUCTIONS) {
+            // Show instructions text
             this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS, align: 'center', width: 5.5, wrapCount: 40});
             
             // Show start button and make clickable
@@ -101,6 +113,7 @@ AFRAME.registerComponent('game-manager', {
         }
 
         if (gameState === GAME_STATES.WAITING) {
+            // Show text for waiting for another player
             this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.WAITING, align: 'center', wrapCount: 24});
         }
 
@@ -109,14 +122,18 @@ AFRAME.registerComponent('game-manager', {
             this.startButton.setAttribute('visible', false);
             this.startButton.classList.remove('interactive');
 
+
             if (roundState === ROUND_STATE.PREPLAY) {
+                // Show text for before a sound is played
                 this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_PREPLAY, align: 'center', wrapCount: 24});
                 this.playerCount.setAttribute('visible', false);
             }
             if (roundState === ROUND_STATE.POSTPLAY) {
+                // Show text to tell player to guess the note
                 this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_POSTPLAY, align: 'center', wrapCount: 24})
             }
             if (roundState === ROUND_STATE.RESULT) {
+                // Show text to indicate if you won or lost the round
                 const isWinner = this.data.roundWinner === this.data.currentPlayerId;
                 const screenText = isWinner ? 'You won the round!' : 'You were too slow...'
                 this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 24})
@@ -125,9 +142,13 @@ AFRAME.registerComponent('game-manager', {
 
         if (gameState === GAME_STATES.FINISHED) {
             const {data: {roundResults, currentPlayerId}} = this;
+            // Calculate how many rounds you won
             const numRoundsPlayed = roundResults.length
             const numRoundsWon = roundResults.filter(res => res === currentPlayerId).length;
             const isWinner = numRoundsWon >= Math.ceil(numRoundsPlayed / 2);
+            // Deduce the winner by the win count is greater than 50% rounded up (i.e. result of 3/5 is a win)
+           
+            // Show overall game result text based on win or loss
             const screenText = isWinner ? `You won ${numRoundsWon}/${numRoundsPlayed} rounds!` : `You lost.\n\n You won ${numRoundsWon}/${numRoundsPlayed} rounds.`
             this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 28});
 

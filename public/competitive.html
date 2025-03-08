@@ -22,13 +22,16 @@
         <link rel="stylesheet" href="css/user-gesture.css">
 
         <script>
+            // Loads the button when the component is ready
             AFRAME.registerComponent('start-experience', {
                 init: function () {
                     document.querySelector('#user-gesture-button').style.display='block';
                 }
             });
 
-            const startCompetitive = async function () {
+            // Hide the overlay when button is clicked
+            // Need to call await Tone.start() to start audio
+            const startExperience = async function () {
                 await Tone.start();
                 document.querySelector('#user-gesture-overlay').style.display= 'none';
             };
@@ -36,14 +39,10 @@
     </head>
     <body>
         <body>
-            <!-- by having a 2D "user gesture" we can allow sounds to play and the like. We will make it an overlay so nothing can be clicked before the user gesture ... -->
-            <!-- https://developers.google.com/web/updates/2017/09/autoplay-policy-changes (fun memes on webpage;) -->
+            <!-- User gesture overlay to get user response to allow playing sound -->
             <div id="user-gesture-overlay">
               <div class="center">
-                <!-- <button class="user-gesture-button-blue" style="display: block;">
-                    <a href="collaborative.html">Collaborate on music</a>
-                </button> -->
-                <button id="user-gesture-button" onclick="startCompetitive()" class="user-gesture-button" style="display: block;">
+                <button id="user-gesture-button" onclick="startExperience()" class="user-gesture-button" style="display: block;">
                     Enter experience
                 </button>
               </div>
@@ -141,14 +140,16 @@
                     <a-box class="interactive piano-note" black-key piano-note="note: G#4" position="2.18132 0.3 -0.17921" material="color: black" depth="1" height="0.3" width="0.30"></a-box>
                     <a-box class="interactive piano-note" black-key piano-note="note: A#4" position="2.67089 0.3 -0.17921" material="color: black" depth="1" height="0.3" width="0.30"></a-box>
                 </a-box>
+
+                <!-- Environment -->
                 <a-entity environment="preset: starry;"></a-entity>
             </a-scene>
         <script>
             const socket = io();
 
-            // Competitive game logic
 
             socket.on('connect', () => {
+                // Add socket id to game-manager
                 document.querySelector('#game-manager').setAttribute('game-manager', 'currentPlayerId', socket.id);
             });
 
@@ -185,8 +186,6 @@
                 gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
             });
             
-            // Competitive game logic end
-
         </script>
     </body>
 </html>

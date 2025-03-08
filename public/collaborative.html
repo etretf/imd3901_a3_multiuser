@@ -9,7 +9,6 @@
         <script src="js/teleport-pad.js"></script>
         <script src="js/collaborative/step-sequencer.js"></script>
         <script src="js/collaborative/note-box.js"></script>
-        <script src="js/collaborative/animated-button.js"></script>
         <script src="js/collaborative/drum-pad.js"></script>
         <script src="js/collaborative/instructions-ui.js"></script>
 
@@ -20,12 +19,15 @@
         <link rel="stylesheet" href="/css/user-gesture.css">
 
         <script>
+            // Loads the button when the component is ready
             AFRAME.registerComponent('start-experience', {
                 init: function () {
                     document.querySelector('#user-gesture-button').style.display='block';
                 }
             });
             
+            // Hide the overlay when button is clicked
+            // Need to call await Tone.start() to start audio
             const startExperience = async function () {
                 await Tone.start();
                 document.querySelector('#user-gesture-overlay').style.display = 'none';
@@ -33,6 +35,7 @@
         </script>
     </head>
     <body>
+        <!-- User gesture overlay to get user response to allow playing sound -->
         <div id="user-gesture-overlay">
             <div class="center">
                 <button id="user-gesture-button" onclick="startExperience()" class="user-gesture-button" style="display: block;">

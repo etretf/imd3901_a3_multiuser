@@ -5,6 +5,7 @@ AFRAME.registerComponent('instructions-ui', {
 
         CONTEXT_AF.closeButton = document.querySelector('#close-instructions-button');
 
+        // Add event listener for click to make the instructions panel disappear
         CONTEXT_AF.closeButton.addEventListener('click', function () {
             CONTEXT_AF.el.parentNode.removeChild(CONTEXT_AF.el);
         });

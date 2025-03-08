@@ -8,6 +8,7 @@ const ACCIDENTALS = {
 const NOTES = [undefined, 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 const OCTAVE = ['-4', '-3', '-2', '-1', '0', '1', '2', '3', '4', '5', '6', '7', '8']
 
+// Array of note colours for a null note and 12 notes in the scale
 const NOTE_COLOURS = [
     '#777777',
     '#F100A9',
@@ -24,6 +25,7 @@ const NOTE_COLOURS = [
     '#FF0000'
 ]
 
+// Array of note emission colours for a null note and 12 notes in the scale
 const NOTE_EMISSION_COLOURS = [
     '#404040',
     '#BE0085',
@@ -56,7 +58,7 @@ AFRAME.registerComponent('note-box', {
     init: function () {
         const CONTEXT_AF = this;
 
-        // Init position
+        // Init start position of the note box
         CONTEXT_AF.data.startPosition = CONTEXT_AF.el.object3D.position;
 
         // Set box attributes
@@ -74,7 +76,8 @@ AFRAME.registerComponent('note-box', {
             emissiveIntensity: 1.5
         });
 
-        // Set animation
+        // Set animations
+        // This animation scales it when the step sequencer 'activates' the current column the notebox is in
         CONTEXT_AF.el.setAttribute('animation__scale', {
             property: 'scale',
             from: {x: 0.6, y: 0.6, z: 0.6},
@@ -84,6 +87,7 @@ AFRAME.registerComponent('note-box', {
             dur: 300
         });
 
+        // Scales it up on click
         CONTEXT_AF.el.setAttribute('animation__scale_click', {
             property: 'scale',
             from: {x: 0.8, y: 0.8, z: 0.8},
@@ -92,6 +96,7 @@ AFRAME.registerComponent('note-box', {
             dur: 300
         });
 
+        // Scales it up slightly on mouseenter
         CONTEXT_AF.el.setAttribute('animation__mouseenter', {
             property: 'scale',
             from: {x: 1, y: 1, z: 1},
@@ -100,6 +105,7 @@ AFRAME.registerComponent('note-box', {
             dur: 200
         });
 
+        // Scales it down on mouseleave
         CONTEXT_AF.el.setAttribute('animation__mouseleave', {
             property: 'scale',
             from: {x: 1.1, y: 1.1, z: 1.1},
@@ -118,13 +124,6 @@ AFRAME.registerComponent('note-box', {
                 C4:  '../assets/sounds/8n/C4.wav',
                 E4:  '../assets/sounds/8n/E4.wav',
                 C5:  '../assets/sounds/8n/C5.wav',
-            },
-            onload: () => {
-                CONTEXT_AF.el.addEventListener('mousedown', function () {
-                    // CONTEXT_AF.sampler.triggerAttackRelease(CONTEXT_AF.data.note, "4n");
-        
-                    // socket.emit('piano_note', {note: CONTEXT_AF.data.note, id: socket.id});
-                })
             }
         }).toDestination();
 
@@ -132,14 +131,14 @@ AFRAME.registerComponent('note-box', {
         // On click - change the note
         CONTEXT_AF.el.addEventListener('click', function (e) {
             // Cycle through notes
-            CONTEXT_AF.data.noteIdx++;
+            // Increment note index
+            CONTEXT_AF.data.noteIdx++; 
+            // Use modulo to remain within the set number of notes
             const noteIdx = CONTEXT_AF.data.noteIdx % 13;
 
             // Update note and colour data
             CONTEXT_AF.data.note = NOTES[noteIdx];
             CONTEXT_AF.data.colour = NOTE_COLOURS[noteIdx];
-
-            console.log(CONTEXT_AF.data.noteIdx);
 
             // Update material colour
             CONTEXT_AF.el.setAttribute('material', {
@@ -150,17 +149,21 @@ AFRAME.registerComponent('note-box', {
             // Emit event to step sequencer to update note
             CONTEXT_AF.sequencerEl.emit('note-change', {note: CONTEXT_AF.data.note, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx});
 
-            // Emit socket event
+            // Emit socket event that note has been played
             socket.emit('send_note_box', {noteIdx: CONTEXT_AF.data.noteIdx, colIdx: CONTEXT_AF.data.colIdx, rowIdx: CONTEXT_AF.data.rowIdx, id: socket.id});
         });
 
         // Add socket event listeners
+
+        // When note matrix is initialised, reset note value to received note index
         socket.on('init_note_matrix', (data) => {
             const {colIdx, rowIdx} = CONTEXT_AF.data;
             const targetNoteIdx = data.matrix[colIdx][rowIdx];
             CONTEXT_AF.el.setAttribute('note-box', 'noteIdx', targetNoteIdx);
         });
 
+        // When note box update event is received, if original source is current user, ignore
+        // Else, check that the note data is for the current notebox and update the current notebox's note index if true
         socket.on('update_note_box', (data) => {
             if (data.id === socket.id) {
                 return
@@ -170,14 +173,16 @@ AFRAME.registerComponent('note-box', {
             }
         });
 
+        // When clear matrix event is received, reset the notebox's note index to 8
         socket.on('update_client_clear_matrix', () => {
-            console.log('clear the sequence from server');
             CONTEXT_AF.el.setAttribute('note-box', {...CONTEXT_AF.el.getAttribute('note-box'),
                 noteIdx: 0
             });
         })
     },
     update: function () {
+        // Logic for updating the notebox's data based on an updated note index value
+        
         const noteIdx = this.data.noteIdx % 13;
         // Update note and colour data
         this.data.note = NOTES[noteIdx];
