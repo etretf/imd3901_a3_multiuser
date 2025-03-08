@@ -43,11 +43,12 @@
         <a-scene start-experience>
             <a-assets>
                 <!-- Images -->
-                <!-- <img id="thumbnail" src="assets/images/thumbnailCompetitive.png" alt="Preview of competitive scene showing a piano and an instructions screen" crossorigin="anonymous"> -->
+                <img id="homeThumbnail" src="assets/images/thumbnailCompetitive.png" alt="Preview of competitive scene showing a piano and an instructions screen" crossorigin="anonymous">
                 <img id="gameScreenImg" src="assets/images/gameScreen.png" crossorigin="anonymous">
                 <img id="buttonGreen" src="assets/images/buttonGreen.png" crossorigin="anonymous">
                 <img id="buttonMagenta" src="assets/images/buttonMagenta.png" crossorigin="anonymous">
                 <img id="buttonOrange" src="assets/images/buttonOrange.png" crossorigin="anonymous">
+                <img id="buttonRed" src="assets/images/buttonExit.png" crossorigin="anonymous">
 
                 <!-- Sound clips -->
                 <audio id="bass-drum-808" src="assets/sounds/8n/808/Bass.wav" preload="auto" crossorigin="anonymous"></audio>
@@ -76,30 +77,37 @@
             </a-entity>
 
 
-            <!-- Link -->
-
-            <!-- <a-entity link="href: competitive.html; title: Note-guessing game; image: #thumbnail" position="-5 8 0"></a-entity> -->
+            <!-- Link to home -->
+            <a-entity id="link-stage" geometry="primitive: cylinder; height: 0.23; radius: 1.11; segmentsHeight: 16" position="-6.897 6.667 3.556" material="color: #180345">
+                <a-image id="link-to-competitive" class="interactive" src="#buttonRed" link="href: index.html;" position="0 1.2 0" rotation="0 120 0" width="1" height="0.6"
+                    animation__mouseenter="property:material.color; type:color; to:rgba(100, 100, 100); startEvents:mouseenter; dur:100"
+                    animation__mouseleave="property:material.color; type:color; to:rgb(255, 255, 255); startEvents:mouseleave; dur:100"
+                >
+                    <a-entity text="value: EXIT; wrapCount: 8; align: center;" position="0 0 0.01"></a-entity>
+                </a-image>
+                <a-entity geometry="primitive: torus; radius: 1.11; radiusTubular: 0.02" rotation="-90 0 0" position="0 0.09396 0" material="color: #fff; emissive: #fff"></a-entity>                
+            </a-entity>
 
             <!-- Teleport pads -->
             <a-cylinder teleport-pad position="0 6.65 0"></a-cylinder>
-            <a-cylinder teleport-pad="" position="3.971 6.75347 -2.55707"></a-cylinder>
-            <a-cylinder teleport-pad="" position="-3.97118 6.75347 -2.55707"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0 6.65 -3.29316"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0 6.65 -3.27969"></a-cylinder>
-            <a-cylinder teleport-pad="" position="-2.472 6.65 -0.83259" ></a-cylinder>
-            <a-cylinder teleport-pad="" position="2.472 6.65 -0.833"></a-cylinder>
-            <a-cylinder teleport-pad="" position="-3.07545 6.65 1.316"></a-cylinder>
-            <a-cylinder teleport-pad="" position="3.075 6.65 1.316"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0 6.65 1.67508"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0 6.753 3.45533"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0 6.753 6.10875"></a-cylinder>
-            <a-cylinder teleport-pad="" position="0.838 6.753 6.57916"></a-cylinder>
-            <a-cylinder teleport-pad="" position="-0.83837 6.753 6.579"></a-cylinder>
+            <a-cylinder teleport-pad position="3.971 6.75347 -2.55707"></a-cylinder>
+            <a-cylinder teleport-pad position="-3.97118 6.75347 -2.55707"></a-cylinder>
+            <a-cylinder teleport-pad position="0 6.65 -3.29316"></a-cylinder>
+            <a-cylinder teleport-pad position="0 6.65 -3.27969"></a-cylinder>
+            <a-cylinder teleport-pad position="-2.472 6.65 -0.83259" ></a-cylinder>
+            <a-cylinder teleport-pad position="2.472 6.65 -0.833"></a-cylinder>
+            <a-cylinder teleport-pad position="-3.07545 6.65 1.316"></a-cylinder>
+            <a-cylinder teleport-pad position="3.075 6.65 1.316"></a-cylinder>
+            <a-cylinder teleport-pad position="0 6.65 1.67508"></a-cylinder>
+            <a-cylinder teleport-pad position="0 6.753 3.45533"></a-cylinder>
+            <a-cylinder teleport-pad position="0 6.753 6.10875"></a-cylinder>
+            <a-cylinder teleport-pad position="0.838 6.753 6.57916"></a-cylinder>
+            <a-cylinder teleport-pad position="-0.83837 6.753 6.579"></a-cylinder>
 
 
             <!-- Stage -->
             <a-entity id="main-stage" geometry="primitive: cylinder; height: 0.53; radius: 6.39; segmentsHeight: 16" position="0 6.411 0" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 6.4; radiusTubular: 0.055" rotation="-90 0 0" position="0 0.2508 0" material="color: #EA00FF; emissive: #00FF44; emissiveIntensity: 9.34"></a-entity>
+                <a-entity geometry="primitive: torus; radius: 6.4; radiusTubular: 0.055" rotation="-90 0 0" position="0 0.2508 0" material="color: #EA00FF; emissive: #00FF44; emissiveIntensity: 9"></a-entity>
                 
                 <!-- UI -->
                 <a-image
@@ -116,23 +124,32 @@
                 </a-image>                
                 <!-- Buttons -->
                 <a-entity position="0 0.5 -1">
-                    <a-image id="start-loop-button" class="interactive" src="#buttonGreen" rotation="-20 20 0" position="-1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Play; wrapCount: 8"></a-image>
-                    <a-image id="stop-loop-button" class="interactive" src="#buttonOrange" rotation="-20 0 0" position="0 0.3 -1" width="0.8" height="0.4" text="align: center; value: Stop; wrapCount: 8"></a-image>
-                    <a-image id="clear-button" class="interactive" src="#buttonMagenta" rotation="-20 -20 0" position="1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Clear; wrapCount: 8"></a-image>
+                    <a-image id="start-loop-button" class="interactive" src="#buttonGreen" rotation="-20 20 0" position="-1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Play; wrapCount: 8"
+                        animation__mouseenter="property:material.color; type:color; to:rgba(100, 100, 100); startEvents:mouseenter; dur:100"
+                        animation__mouseleave="property:material.color; type:color; to:rgb(255, 255, 255); startEvents:mouseleave; dur:100"
+                    ></a-image>
+                    <a-image id="stop-loop-button" class="interactive" src="#buttonOrange" rotation="-20 0 0" position="0 0.3 -1" width="0.8" height="0.4" text="align: center; value: Stop; wrapCount: 8"
+                        animation__mouseenter="property:material.color; type:color; to:rgba(100, 100, 100); startEvents:mouseenter; dur:100"
+                        animation__mouseleave="property:material.color; type:color; to:rgb(255, 255, 255); startEvents:mouseleave; dur:100"
+                    ></a-image>
+                    <a-image id="clear-button" class="interactive" src="#buttonMagenta" rotation="-20 -20 0" position="1 0.3 -0.7" width="0.8" height="0.4" text="align: center; value: Clear; wrapCount: 8"
+                        animation__mouseenter="property:material.color; type:color; to:rgba(100, 100, 100); startEvents:mouseenter; dur:100"
+                        animation__mouseleave="property:material.color; type:color; to:rgb(255, 255, 255); startEvents:mouseleave; dur:100"
+                    ></a-image>
                 </a-entity>
             </a-entity>
 
             <a-entity id="left-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="-3.85507 6.66555 -4.94132" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="0 0.09396 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>                
+                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="0 0.09396 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9"></a-entity>                
             </a-entity>
             <a-entity id="right-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="3.85 6.66103 -4.94132" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="-0.03545 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
+                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.02" rotation="-90 0 0" position="-0.03545 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9"></a-entity>
             </a-entity>
             <a-entity id="control-centre" geometry="primitive: cylinder; height: 0.23; radius: 0; segmentsHeight: 16" position="-0.0345 6.66103 0.21197" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 1.59; radiusTubular: 0.025" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #a4f807; emissive: #85ff15; emissiveIntensity: 9.34"></a-entity><a-entity geometry="primitive: torus; radiusTubular: 0.02" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #15ff09; emissive: #21d900; emissiveIntensity: 9.34"></a-entity>
+                <a-entity geometry="primitive: torus; radius: 1.59; radiusTubular: 0.025" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #a4f807; emissive: #85ff15; emissiveIntensity: 9"></a-entity><a-entity geometry="primitive: torus; radiusTubular: 0.02" rotation="-90 0 0" position="0 -0.01815 -0.79796" material="color: #15ff09; emissive: #21d900; emissiveIntensity: 9"></a-entity>
             </a-entity>
             <a-entity id="drum-stage" geometry="primitive: cylinder; height: 0.23; radius: 3.11; segmentsHeight: 16" position="0 6.67277 5.53113" material="color: #180345">
-                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.035" rotation="-90 0 0" position="0 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9.34"></a-entity>
+                <a-entity geometry="primitive: torus; radius: 3.11; radiusTubular: 0.035" rotation="-90 0 0" position="0 0.10548 0" material="color: #f8079d; emissive: #ff0026; emissiveIntensity: 9"></a-entity>
                 <!-- Drum pads -->
                 <a-entity id="drum-kit" position="0 0.55 0">
                     <a-cylinder id="bass-pad" drum-pad="beatType: bass" position="-1 0 -2" rotation="70 0 -20"></a-cylinder>

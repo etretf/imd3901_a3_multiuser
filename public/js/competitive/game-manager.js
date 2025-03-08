@@ -65,13 +65,10 @@ AFRAME.registerComponent('game-manager', {
         // Select DOM elements
         CONTEXT_AF.startButton = document.querySelector('#start-button');
         CONTEXT_AF.playerCount = document.querySelector('#player-count');
-        CONTEXT_AF.playSoundButton = document.querySelector('#play-sound-button');
         CONTEXT_AF.restartButton = document.querySelector('#restart-button');
         CONTEXT_AF.gameScreen = document.querySelector('#game-screen');
 
         CONTEXT_AF.startButton.addEventListener('click', function () {
-            console.log('start');
-
             // Make start button unclickable and hidden
             CONTEXT_AF.startButton.setAttribute('visible', false);
             CONTEXT_AF.startButton.classList.remove('interactive');
@@ -89,12 +86,9 @@ AFRAME.registerComponent('game-manager', {
     },
     tick: function () {},
     update: function (oldData) {
-        console.log(oldData);
-
         const {data: {gameState, roundState}} = this
 
         if (gameState === GAME_STATES.INSTRUCTIONS) {
-            console.log('Instructions stage');
             this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.INSTRUCTIONS, align: 'center', width: 5.5, wrapCount: 40});
             
             // Show start button and make clickable
@@ -107,28 +101,22 @@ AFRAME.registerComponent('game-manager', {
         }
 
         if (gameState === GAME_STATES.WAITING) {
-            console.log('Waiting for another player...');
             this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.WAITING, align: 'center', wrapCount: 24});
         }
 
         if (gameState === GAME_STATES.ACTIVE) {
-            console.log('Active game state');
-
             // Hide restart button and make unclickable
             this.startButton.setAttribute('visible', false);
             this.startButton.classList.remove('interactive');
 
             if (roundState === ROUND_STATE.PREPLAY) {
-                console.log('preplay');
                 this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_PREPLAY, align: 'center', wrapCount: 24});
                 this.playerCount.setAttribute('visible', false);
             }
             if (roundState === ROUND_STATE.POSTPLAY) {
-                console.log('postplay');
                 this.gameScreen.setAttribute('text', {value: SCREEN_TEXT.ROUND_POSTPLAY, align: 'center', wrapCount: 24})
             }
             if (roundState === ROUND_STATE.RESULT) {
-                console.log('round result');
                 const isWinner = this.data.roundWinner === this.data.currentPlayerId;
                 const screenText = isWinner ? 'You won the round!' : 'You were too slow...'
                 this.gameScreen.setAttribute('text', {value: screenText, align: 'center', wrapCount: 24})
@@ -136,7 +124,6 @@ AFRAME.registerComponent('game-manager', {
         }
 
         if (gameState === GAME_STATES.FINISHED) {
-            console.log('Finished game state');
             const {data: {roundResults, currentPlayerId}} = this;
             const numRoundsPlayed = roundResults.length
             const numRoundsWon = roundResults.filter(res => res === currentPlayerId).length;

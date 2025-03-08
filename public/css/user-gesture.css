@@ -1,10 +1,5 @@
 /* just some css to make an overlay cover all A-Frame */
 
-* {
-  font-family: 'Lexend', sans-serif;
-  color: white;
-}
-
 #user-gesture-overlay {
   position: fixed;
   display: block;
@@ -17,6 +12,7 @@
   background-color: rgba(11, 18, 35, 0.9);
   z-index: 999999;
   cursor: pointer;
+  color: white;
 }
 
 .center {
@@ -35,6 +31,7 @@
   width: 80%;
   height: 80%;
   background-color: rgb(36, 120, 190);
+  color: white;
   padding: 14px 20px;
   margin: 0px 10px 8px 10px;
   border-radius: 20px;
@@ -42,6 +39,7 @@
   transition: all 0.2s;
   font-size: 1.2em;
   font-weight: 600;
+  font-family: 'Lexend', sans-serif;
 }
 
 .user-gesture-button:hover {
@@ -54,7 +52,7 @@
   height: 80%;
 }
 
-a {
+#user-gesture-overlay a {
   text-decoration: none;
   height: 100%;
   width: 100%;
@@ -67,6 +65,7 @@ a {
 
 .welcome-text h1, h2 {
   text-align: center;
+  font-family: 'Lexend', sans-serif;
 }
 
 h1 {

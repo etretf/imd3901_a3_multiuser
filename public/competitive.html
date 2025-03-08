@@ -8,18 +8,17 @@
         <script src="https://unpkg.com/tone"></script>
         <!-- Scripts -->
         <!-- <script src="js/constants.js"></script> -->
-        <script src="js/piano-note.js"></script>
-        <script src="js/piano-spawn.js"></script>
-        <script src="js/black-key.js"></script>
-        <script src="js/game-manager.js"></script>
-        <script src="js/play-note.js"></script>
+        <script src="js/competitive/piano-note.js"></script>
+        <script src="js/competitive/piano-spawn.js"></script>
+        <script src="js/competitive/black-key.js"></script>
+        <script src="js/competitive/game-manager.js"></script>
+        <script src="js/competitive/play-note.js"></script>
         <script src="js/teleport-pad.js"></script>
 
+        <!-- Stylesheet links -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-
-        <!-- Stylesheet links -->
         <link rel="stylesheet" href="css/user-gesture.css">
 
         <script>
@@ -55,6 +54,7 @@
                     <img id="buttonGreen" src="assets/images/buttonGreen.png" crossorigin="anonymous">
                     <img id="buttonMagenta" src="assets/images/buttonMagenta.png" crossorigin="anonymous">
                     <img id="buttonOrange" src="assets/images/buttonOrange.png" crossorigin="anonymous">
+                    <img id="buttonRed" src="assets/images/buttonExit.png" crossorigin="anonymous">
                 </a-assets>
                 <!-- Game manager -->
                     <a-entity id="game-manager" game-manager></a-entity>
@@ -79,13 +79,31 @@
                 <a-cylinder teleport-pad></a-cylinder>
                 <a-cylinder teleport-pad position="0 0 -1"></a-cylinder>
                 <a-cylinder teleport-pad position="0 0 -2"></a-cylinder>
+                <a-cylinder teleport-pad position="-2.011 0 -2"></a-cylinder>
+                <a-cylinder teleport-pad position="2.011 0 -2"></a-cylinder>
+                
+                <!-- Link to home -->
+                <a-entity id="link-stage" geometry="primitive: cylinder; height: 0.23; radius: 1.11; segmentsHeight: 16" position="-3 0 2.2" material="color: #180345;">
+                    <a-image id="link-to-competitive" class="interactive" src="#buttonRed" link="href: index.html" position="0 1.2 0" rotation="0 140 0" width="1" height="0.6"
+                        animation__mouseenter="dur: 100; property: material.color; startEvents: mouseenter; to: rgba(100, 100, 100); type: color"
+                        animation__mouseleave="dur: 100; property: material.color; startEvents: mouseleave; to: rgb(255, 255, 255); type: color"
+                    >
+                        <a-entity text="align: center; value: EXIT; wrapCount: 8" position="0 0 0.01"></a-entity>
+                    </a-image>
+                    <a-entity geometry="primitive: torus; radius: 1.11; radiusTubular: 0.02" rotation="-90 0 0" position="0 0.09396 0" material="color: #fff; emissive: #fff"></a-entity>                
+                </a-entity>
 
                 <!-- Game screen -->
 
                 <a-image id="game-screen" src="#gameScreenImg" width="6" height="4" position="0 2 -8">
-                    <a-image id="start-button" class="interactive" src="#buttonGreen" position="0 -1.2 1.5" width="1" height="0.5" text="value: Start; wrapCount: 8; align:center;"></a-image>
-                    <a-image id="play-sound-button" visible="false" src="#buttonOrange" position="0 -1.2 1.5" width="1" height="0.5" text="value: PLAY SOUND; wrapCount: 12; align:center;"></a-image>
-                    <a-image id="restart-button" visible="false" src="#buttonMagenta" position="0 -1.2 1.5" width="1" height="0.5" text="value: RESTART; wrapCount: 12; align:center;"></a-image>
+                    <a-image id="start-button" class="interactive" src="#buttonGreen" position="0 -1.2 1.5" width="1" height="0.5" text="value: Start; wrapCount: 8; align:center;"
+                        animation__mouseenter="dur: 100; property: material.color; startEvents: mouseenter; to: rgba(100, 100, 100); type: color"
+                        animation__mouseleave="dur: 100; property: material.color; startEvents: mouseleave; to: rgb(255, 255, 255); type: color"
+                    ></a-image>
+                    <a-image id="restart-button" visible="false" src="#buttonMagenta" position="0 -1.2 1.5" width="1" height="0.5" text="value: RESTART; wrapCount: 12; align:center;"
+                        animation__mouseenter="dur: 100; property: material.color; startEvents: mouseenter; to: rgba(100, 100, 100); type: color"
+                        animation__mouseleave="dur: 100; property: material.color; startEvents: mouseleave; to: rgb(255, 255, 255); type: color"
+                    ></a-image>
                     <a-image id="player-count" visible="false" src="#buttonGreen" position="0 -1.2 1.5" width="1" height="0.5"></a-image>
                 </a-image>
 
