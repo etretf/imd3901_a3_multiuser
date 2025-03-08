@@ -1,56 +1,86 @@
 /* just some css to make an overlay cover all A-Frame */
 
+* {
+  font-family: 'Lexend', sans-serif;
+  color: white;
+}
+
 #user-gesture-overlay {
-    position: fixed;
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.9);
-    z-index: 999999;
-    cursor: pointer;
-  }
-  
-  .center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
-  
-  .user-gesture-button {
-    display: none;
-    width: 80%;
-    height: 80%;
-    background-color: rgb(235, 79, 38);
-    color: white;
-    padding: 14px 20px;
-    margin: 0px 10px 8px 10px;
-    border: 5px solid #ffffff;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 24px;
-  }
-  
-  .user-gesture-button:hover {
-    background-color: rgb(246, 194, 67);
-  }
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(11, 18, 35, 0.9);
+  z-index: 999999;
+  cursor: pointer;
+}
 
-  
-  #loading-animation {
-    display: block;
-    width: 80%;
-    height: 80%;
-  }
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+}
 
-  a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    font-size: 20px;
-  }
+.user-gesture-button {
+  display: none;
+  width: 80%;
+  height: 80%;
+  background-color: rgb(36, 120, 190);
+  padding: 14px 20px;
+  margin: 0px 10px 8px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.user-gesture-button:hover {
+  background-color: rgb(18, 0, 92);
+}
+
+#loading-animation {
+  display: block;
+  width: 80%;
+  height: 80%;
+}
+
+a {
+  text-decoration: none;
+  height: 100%;
+  width: 100%;
+}
+
+.welcome-text {
+  width: 100%;
+  margin-bottom: 3em;
+}
+
+.welcome-text h1, h2 {
+  text-align: center;
+}
+
+h1 {
+  font-size: 4em;
+}
+
+.select-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: 100px;
+}
+
+.select-buttons a {
+  display: flex;
+  justify-content: center;
+}

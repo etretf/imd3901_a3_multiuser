@@ -97,8 +97,6 @@ AFRAME.registerComponent('step-sequencer', {
         });
     },
     update: function (oldData) {
-        console.log(oldData, this);
-
         if (this.sequencer) {
             this.sequencer.dispose();
         }
@@ -114,7 +112,7 @@ AFRAME.registerComponent('step-sequencer', {
             }
             el.emit('note-animate');
         })
-                
+
         socket.emit('send_sequence_column', {notes: notesToPlay, id: socket.id});
         this.sampler.triggerAttackRelease(notesToPlay, this.data.subdivision);
     },
