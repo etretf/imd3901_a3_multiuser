@@ -147,18 +147,19 @@
         <script>
             const socket = io();
 
-
             socket.on('connect', () => {
-                // Add socket id to game-manager
+                // Add socket id to game-manager component
                 document.querySelector('#game-manager').setAttribute('game-manager', 'currentPlayerId', socket.id);
             });
 
+            // Update the game-manager's game and round state with the event's data
             socket.on('update_game_state', (data) => {
                 const gameManagerEl = document.querySelector('#game-manager');
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
                 gameManagerEl.setAttribute('game-manager', 'gameState', data.state);
             });
 
+            // Determine the number of ready players and update the text for the game UI
             socket.on('get_player_data', (data) => {
                 const numReadyPlayers = data.players.filter(player => player.ready === true).length;
                 const totalNumPlayers = data.players.length;
@@ -167,18 +168,21 @@
                 document.querySelector('#player-count').setAttribute('text', text=`value: ${playerCountText}; wrapCount: 12; align:center;`);
             });
 
+            // Receive the note from the event data then emit an event on the sound player to play the note to guess
             socket.on('play_note', (data) => {
                 const soundPlayer = document.querySelector('#sound-player');
                 soundPlayer.setAttribute('play-note', {note: data.note});
                 soundPlayer.emit('play_note', data.note);
             });
 
+            // Receive the current round's result and update the game-manager to update the game UI
             socket.on('round_result', (data) => {
                 const gameManagerEl = document.querySelector('#game-manager')
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);
                 gameManagerEl.setAttribute('game-manager', 'roundWinner', data.id);
             });
 
+            // Receive the game_over event and update the game-manager to show final game results and update the game state
             socket.on('game_over', (data) => {
                 const gameManagerEl = document.querySelector('#game-manager')
                 gameManagerEl.setAttribute('game-manager', 'roundState', data.roundState);

@@ -141,7 +141,7 @@ AFRAME.registerComponent('step-sequencer', {
     },
     indexArray: function (count) {
         // Function creates an array of index values
-        // I.e. pass in (4)  -> return [0, 1, 2, 3]
+        // I.e. pass in (4)  -> return array [0, 1, 2, 3]
         const indices = [];
         for (let i = 0; i < count; i++) {
             indices.push(i);

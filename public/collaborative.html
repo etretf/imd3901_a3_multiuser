@@ -176,6 +176,7 @@
         <script>
             const socket = io();
 
+            // Receive event and emits event back to server with the player position and rotation
             socket.on('get_player_info', () => {
                 const playerEl = document.querySelector('#player');
 
@@ -186,13 +187,15 @@
                 });
             });
 
+            // Receive event to update other players in the scene or create them if they do not exist
             socket.on('update_client_player_transforms', (data) => {
                 const {playerTransforms} = data;
                 const playerIds = Object.keys(playerTransforms);
 
+                // Loop through all player ids
                 playerIds.forEach((id) => {
                     const player = playerTransforms[id];
-
+                    // If the current id is the player, return since we do not want to render a new element for the current player
                     if (id === socket.id) {
                         return
                     }
@@ -200,26 +203,28 @@
                     const playerElementId = `player-${id}`;
                     let playerEl = document.querySelector('#' + playerElementId);
                 
+                    // If the player element does not exist, create it and assign attributes
                     if (playerEl === null) {
                         playerEl = document.createElement('a-entity');
                         playerEl.setAttribute('id', `player-${id}`);
+                        playerEl.setAttribute('gltf-model', '#neon-glasses-model');
                         document.querySelector('a-scene').appendChild(playerEl);
                     }
 
+                    // Update the position and rotation
                     playerEl.setAttribute('position', player.position);
                     playerEl.setAttribute('rotation', player.rotation);
-                    playerEl.setAttribute('gltf-model', '#neon-glasses-model');
                 })
             });
 
+            // On disconnect, remove the disconnected player element from the 
             socket.on('player_disconnect', (data) => {
                 const playerToDelete = document.querySelector('#player-' + data.id);
 
                 if (playerToDelete !== null) {
                     playerToDelete.parentNode.removeChild(playerToDelete);
                 }
-            })
-
+            });
         </script>
     </body>
 </html>
