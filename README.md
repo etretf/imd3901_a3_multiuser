@@ -1,2 +1,2 @@
-# imd3901_a3_multiuser
+# WebXR Step Sequencer/Musical Game Multi-User Experience
  
